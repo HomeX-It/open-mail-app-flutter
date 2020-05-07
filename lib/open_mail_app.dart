@@ -6,6 +6,11 @@ import 'package:url_launcher/url_launcher.dart';
 class OpenMailApp {
   static const MethodChannel _channel = const MethodChannel('open_mail_app');
 
+  static Future<String> get platformVersion async {
+    final String version = await _channel.invokeMethod('getPlatformVersion');
+    return version;
+  }
+
   Future<List<App>> _getIosMailApps() async {
     var installedApps = <App>[];
     for (var app in _IosLaunchSchemes.mailApps) {
