@@ -1,0 +1,27 @@
+name: open_mail_app
+description: Lets you open mail apps
+version: 0.0.1
+author:
+homepage:
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+  flutter: ">=1.10.0"
+
+dependencies:
+  url_launcher: ^5.4.5
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: com.homex.open_mail_app
+        pluginClass: OpenMailAppPlugin
+      ios:
+        pluginClass: OpenMailAppPlugin
