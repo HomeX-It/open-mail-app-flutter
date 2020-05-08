@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.LabeledIntent
 import android.net.Uri
 import androidx.annotation.NonNull;
+import com.google.gson.Gson
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
@@ -18,6 +19,8 @@ class OpenMailAppPlugin : FlutterPlugin, MethodCallHandler {
     private lateinit var applicationContext: Context
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+        // Although getFlutterEngine is deprecated we still need to use it for
+        // apps not updated to Flutter Android v2 embedding
         channel = MethodChannel(flutterPluginBinding.flutterEngine.dartExecutor, "open_mail_app")
         channel.setMethodCallHandler(this);
         init(flutterPluginBinding.applicationContext)
@@ -50,10 +53,14 @@ class OpenMailAppPlugin : FlutterPlugin, MethodCallHandler {
         if (call.method == "openMailApp") {
             val opened = emailAppIntent()
             if (opened) {
-                result.success(null)
+                result.success(true)
             } else {
-                result.error("noMailApps", "No mail apps installed", "")
+                result.success(false)
             }
+        } else if (call.method == "getMainApps") {
+            val apps = getInstalledMailApps();
+            val appsJson = Gson().toJson(apps)
+            result.success(appsJson)
         } else {
             result.notImplemented()
         }
@@ -91,10 +98,31 @@ class OpenMailAppPlugin : FlutterPlugin, MethodCallHandler {
             }
             val extraEmailInboxIntents = emailInboxIntents.toTypedArray()
             val finalIntent = emailAppChooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraEmailInboxIntents)
+            finalIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             applicationContext.startActivity(finalIntent);
             return true;
         } else {
             return false;
         }
     }
+
+    private fun getInstalledMailApps(): List<App> {
+        val emailIntent = Intent(Intent.ACTION_VIEW, Uri.parse("mailto:"))
+        val packageManager = applicationContext.packageManager
+        val activitiesHandlingEmails = packageManager.queryIntentActivities(emailIntent, 0)
+
+        return if (activitiesHandlingEmails.isNotEmpty()) {
+            val mailApps = mutableListOf<App>()
+            for (i in 0 until activitiesHandlingEmails.size) {
+                val activityHandlingEmail = activitiesHandlingEmails[i]
+                val packageName = activityHandlingEmail.activityInfo.packageName
+                mailApps.add(App(activityHandlingEmail.loadLabel(packageManager).toString()))
+            }
+            mailApps;
+        } else {
+            emptyList();
+        }
+    }
 }
+
+data class App(val name: String)
