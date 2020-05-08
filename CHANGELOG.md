@@ -1,3 +1,5 @@
 ## 0.0.1
 
-* TODO: Describe initial release.
+* Initial release.
+* Open email apps
+* Get list of installed email apps

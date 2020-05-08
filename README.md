@@ -1,14 +1,69 @@
-# open_mail_app
+# Open Mail App Flutter
+A boring but accurate name.
 
-A new flutter plugin project.
+This library provides the ability to query the device for installed email apps and open those apps.
 
-## Getting Started
+If you just want to compose an email or open any app with a `mailto:` link, you are looking for [url_launcher](https://pub.dev/packages/url_launcher).
+## Why
+While [url_launcher](https://pub.dev/packages/url_launcher) can help you compose an email or open the default email app, it doesn't give you control over which is opened and it doesn't tell you what is available on the device. This is especially a problem on iOS where only the default [Mail](https://apps.apple.com/us/app/mail/id1108187098) app will be opened, even if the user prefers a different app.
+## Usage
+### Open Mail App With Picker If Multiple
+```dart
+import 'package:open_mail_app/open_mail_app.dart';
 
-This project is a starting point for a Flutter
-[plug-in package](https://flutter.dev/developing-packages/),
-a specialized package that includes platform-specific implementation code for
-Android and/or iOS.
+void main() {
+  runApp(MaterialApp(home: MyApp()));
+}
 
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.dev/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return RaisedButton(
+      child: Text("Open Mail App"),
+      onPressed: () async {
+        // Android: Will open mail app or show native picker.
+        // iOS: Will open mail app if single mail app found.
+        var result = await OpenMailApp.openMailApp();
+
+        // If no mail apps found, show error
+        if (!result.didOpen && !result.canOpen) {
+          showNoMailAppsDialog(context);
+
+          // iOS: if multiple mail apps found, show dialog to select.
+          // There is no native intent/default app system in iOS so
+          // you have to do it yourself.
+        } else if (!result.didOpen && result.canOpen) {
+          showDialog(
+            context: context,
+            builder: (_) {
+              return MailAppPickerDialog(
+                mailApps: result.options,
+              );
+            },
+          );
+        }
+      },
+    );
+  }
+
+  void showNoMailAppsDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Open Mail App"),
+          content: Text("No mail apps installed"),
+          actions: <Widget>[
+            FlatButton(
+              child: Text("OK"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            )
+          ],
+        );
+      },
+    );
+  }
+}
+```

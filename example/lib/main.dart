@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
-
-import 'package:flutter/services.dart';
 import 'package:open_mail_app/open_mail_app.dart';
 
 void main() {
@@ -22,8 +19,8 @@ class MyApp extends StatelessWidget {
             RaisedButton(
               child: Text("Open Mail App"),
               onPressed: () async {
-                // Android: Will open mail app or show native picker
-                // iOS: Will open mail app if single mail app found
+                // Android: Will open mail app or show native picker.
+                // iOS: Will open mail app if single mail app found.
                 var result = await OpenMailApp.openMailApp();
 
                 // If no mail apps found, show error
@@ -31,8 +28,8 @@ class MyApp extends StatelessWidget {
                   showNoMailAppsDialog(context);
 
                   // iOS: if multiple mail apps found, show dialog to select.
-                  // there is no native intent/default app system in iOS so
-                  // you have to do it yourself
+                  // There is no native intent/default app system in iOS so
+                  // you have to do it yourself.
                 } else if (!result.didOpen && result.canOpen) {
                   showDialog(
                     context: context,
