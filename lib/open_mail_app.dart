@@ -7,11 +7,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+/// Provides ability to query device for installed email apps and open those
+/// apps
 class OpenMailApp {
   OpenMailApp._();
 
   static const MethodChannel _channel = const MethodChannel('open_mail_app');
 
+  /// Attempts to open an email app installed on the device.
+  ///
+  /// Android: Will open mail app or show native picker if multiple.
+  ///
+  /// iOS: Will open mail app if single installed mail app is found. If multiple
+  /// are found will return a [OpenMailAppResult] that contains list of
+  /// [MailApp]s. This can be used along with [MailAppPickerDialog] to allow
+  /// the user to pick the mail app they want to open.
+  ///
+  /// Also see [openSpecificMailApp] and [getMailApps] for other use cases.
   static Future<OpenMailAppResult> openMailApp() async {
     if (Platform.isAndroid) {
       var result = await _channel.invokeMethod<bool>('openMailApp');
@@ -29,6 +41,8 @@ class OpenMailApp {
     }
   }
 
+  /// Attempts to open a specific email app installed on the device.
+  /// Get a [MailApp] from calling [getMailApps]
   static Future<bool> openSpecificMailApp(MailApp mailApp) async {
     if (Platform.isAndroid) {
       var result = await _channel.invokeMethod<bool>(
@@ -43,6 +57,9 @@ class OpenMailApp {
     }
   }
 
+  /// Returns a list of installed email apps on the device
+  ///
+  /// iOS: [MailApp.iosLaunchScheme] will be populated
   static Future<List<MailApp>> getMailApps() async {
     if (Platform.isAndroid) {
       var appsJson = await _channel.invokeMethod<String>('getMainApps');
@@ -68,6 +85,9 @@ class OpenMailApp {
   }
 }
 
+/// A simple dialog for allowing the user to pick and open an email app
+/// Use with [OpenMailApp.getMailApps] or [OpenMailApp.openMailApp] to get a
+/// list of mail apps installed on the device.
 class MailAppPickerDialog extends StatelessWidget {
   final List<MailApp> mailApps;
 
@@ -112,6 +132,9 @@ class MailApp {
       };
 }
 
+/// Result of calling [OpenMailApp.openMailApp]
+///
+/// [options] and [canOpen] are only populated and used on iOS
 class OpenMailAppResult {
   final bool didOpen;
   final List<MailApp> options;
