@@ -8,6 +8,23 @@ This library provides the ability to query the device for installed email apps a
 If you just want to compose an email or open any app with a `mailto:` link, you are looking for [url_launcher](https://pub.dev/packages/url_launcher).
 ## Why
 While [url_launcher](https://pub.dev/packages/url_launcher) can help you compose an email or open the default email app, it doesn't give you control over which is opened and it doesn't tell you what is available on the device. This is especially a problem on iOS where only the default [Mail](https://apps.apple.com/us/app/mail/id1108187098) app will be opened, even if the user prefers a different app.
+## Setup
+iOS requires you to list the URL schemes you would like to query in the `Info.plist` file.
+
+```
+<key>LSApplicationQueriesSchemes</key>
+<array>
+    <string>googlegmail</string>
+    <string>x-dispatch</string>
+    <string>readdle-spark</string>
+    <string>airmail</string>
+    <string>ms-outlook</string>
+    <string>ymail</string>
+    <string>fastmail</string>
+</array>
+```
+
+Please file issues to add popular email apps you would like to see on iOS. They need to be added to both your app's `Info.plist` and in the source of this library. 
 ## Usage
 ### Open Mail App With Picker If Multiple
 ```dart
