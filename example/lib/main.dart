@@ -30,8 +30,10 @@ class MyApp extends StatelessWidget {
                 if (!result.didOpen && !result.canOpen) {
                   showNoMailAppsDialog(context);
 
-                  //iOS: if multiple mail apps found, show dialog to select
-                } else if (result.canOpen) {
+                  // iOS: if multiple mail apps found, show dialog to select.
+                  // there is no native intent/default app system in iOS so
+                  // you have to do it yourself
+                } else if (!result.didOpen && result.canOpen) {
                   showDialog(
                     context: context,
                     builder: (_) {
@@ -47,29 +49,14 @@ class MyApp extends StatelessWidget {
               child: Text("Get Mail Apps"),
               onPressed: () async {
                 var apps = await OpenMailApp.getMailApps();
-                if (apps.length == 0) {
+                if (apps.isEmpty) {
                   showNoMailAppsDialog(context);
                 } else {
                   showDialog(
                     context: context,
                     builder: (context) {
-                      return AlertDialog(
-                        title: Text("Mail Apps"),
-                        content: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            for (var app in apps) Text(app.name),
-                          ],
-                        ),
-                        actions: <Widget>[
-                          FlatButton(
-                            child: Text("OK"),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                          )
-                        ],
+                      return MailAppPickerDialog(
+                        mailApps: apps,
                       );
                     },
                   );

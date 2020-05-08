@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.LabeledIntent
 import android.net.Uri
-import androidx.annotation.NonNull;
+import androidx.annotation.NonNull
 import com.google.gson.Gson
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -22,7 +22,7 @@ class OpenMailAppPlugin : FlutterPlugin, MethodCallHandler {
         // Although getFlutterEngine is deprecated we still need to use it for
         // apps not updated to Flutter Android v2 embedding
         channel = MethodChannel(flutterPluginBinding.flutterEngine.dartExecutor, "open_mail_app")
-        channel.setMethodCallHandler(this);
+        channel.setMethodCallHandler(this)
         init(flutterPluginBinding.applicationContext)
     }
 
@@ -57,8 +57,15 @@ class OpenMailAppPlugin : FlutterPlugin, MethodCallHandler {
             } else {
                 result.success(false)
             }
+        } else if (call.method == "openSpecificMailApp" && call.hasArgument("name")) {
+            val opened = specificEmailAppIntent(call.argument("name")!!)
+            if (opened) {
+                result.success(true)
+            } else {
+                result.success(false)
+            }
         } else if (call.method == "getMainApps") {
-            val apps = getInstalledMailApps();
+            val apps = getInstalledMailApps()
             val appsJson = Gson().toJson(apps)
             result.success(appsJson)
         } else {
@@ -99,11 +106,29 @@ class OpenMailAppPlugin : FlutterPlugin, MethodCallHandler {
             val extraEmailInboxIntents = emailInboxIntents.toTypedArray()
             val finalIntent = emailAppChooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraEmailInboxIntents)
             finalIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-            applicationContext.startActivity(finalIntent);
-            return true;
+            applicationContext.startActivity(finalIntent)
+            return true
         } else {
-            return false;
+            return false
         }
+    }
+
+    private fun specificEmailAppIntent(name: String): Boolean {
+        val emailIntent = Intent(Intent.ACTION_VIEW, Uri.parse("mailto:"))
+        val packageManager = applicationContext.packageManager
+
+        val activitiesHandlingEmails = packageManager.queryIntentActivities(emailIntent, 0)
+        val activityHandlingEmail = activitiesHandlingEmails.firstOrNull {
+            it.loadLabel(packageManager) == name
+        } ?: return false
+
+        val firstEmailPackageName = activityHandlingEmail.activityInfo.packageName
+        val emailInboxIntent = packageManager.getLaunchIntentForPackage(firstEmailPackageName)
+                ?: return false
+
+        emailInboxIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        applicationContext.startActivity(emailInboxIntent)
+        return true
     }
 
     private fun getInstalledMailApps(): List<App> {
@@ -115,12 +140,11 @@ class OpenMailAppPlugin : FlutterPlugin, MethodCallHandler {
             val mailApps = mutableListOf<App>()
             for (i in 0 until activitiesHandlingEmails.size) {
                 val activityHandlingEmail = activitiesHandlingEmails[i]
-                val packageName = activityHandlingEmail.activityInfo.packageName
                 mailApps.add(App(activityHandlingEmail.loadLabel(packageManager).toString()))
             }
-            mailApps;
+            mailApps
         } else {
-            emptyList();
+            emptyList()
         }
     }
 }

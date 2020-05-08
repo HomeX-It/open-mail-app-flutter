@@ -31,7 +31,11 @@ class OpenMailApp {
 
   static Future<bool> openSpecificMailApp(MailApp mailApp) async {
     if (Platform.isAndroid) {
-      throw Exception('Platform not supported');
+      var result = await _channel.invokeMethod<bool>(
+        'openSpecificMailApp',
+        <String, dynamic>{'name': mailApp.name},
+      );
+      return result;
     } else if (Platform.isIOS) {
       return await launch(mailApp.iosLaunchScheme);
     } else {
@@ -111,7 +115,7 @@ class MailApp {
 class OpenMailAppResult {
   final bool didOpen;
   final List<MailApp> options;
-  bool get canOpen => options.isNotEmpty;
+  bool get canOpen => options?.isNotEmpty ?? false;
 
   OpenMailAppResult({@required this.didOpen, this.options});
 }
