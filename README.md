@@ -1,4 +1,6 @@
 # Open Mail App Flutter
+[![pub package](https://img.shields.io/pub/v/open_mail_app.svg?label=open_mail_app&color=blue)](https://pub.dev/packages/open_mail_app)
+
 A boring but accurate name.
 
 This library provides the ability to query the device for installed email apps and open those apps.
