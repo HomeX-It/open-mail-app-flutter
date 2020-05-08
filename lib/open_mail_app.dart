@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -10,22 +12,38 @@ class OpenMailApp {
 
   static const MethodChannel _channel = const MethodChannel('open_mail_app');
 
-  static Future<bool> openMailApp() async {
+  static Future<OpenMailAppResult> openMailApp() async {
     if (Platform.isAndroid) {
       var result = await _channel.invokeMethod<bool>('openMailApp');
-      return result;
+      return OpenMailAppResult(didOpen: result);
     } else if (Platform.isIOS) {
-      throw Exception('Platform not supported');
+      var apps = await _getIosMailApps();
+      if (apps.length == 1) {
+        var result = await launch(apps.first.iosLaunchScheme);
+        return OpenMailAppResult(didOpen: result);
+      } else {
+        return OpenMailAppResult(didOpen: false, options: apps);
+      }
     } else {
       throw Exception('Platform not supported');
     }
   }
 
-  static Future<List<App>> getMailApps() async {
+  static Future<bool> openSpecificMailApp(MailApp mailApp) async {
+    if (Platform.isAndroid) {
+      throw Exception('Platform not supported');
+    } else if (Platform.isIOS) {
+      return await launch(mailApp.iosLaunchScheme);
+    } else {
+      throw Exception('Platform not supported');
+    }
+  }
+
+  static Future<List<MailApp>> getMailApps() async {
     if (Platform.isAndroid) {
       var appsJson = await _channel.invokeMethod<String>('getMainApps');
       var apps = (jsonDecode(appsJson) as Iterable)
-          .map((x) => App.fromJson(x))
+          .map((x) => MailApp.fromJson(x))
           .toList();
       return apps;
     } else if (Platform.isIOS) {
@@ -35,41 +53,72 @@ class OpenMailApp {
     }
   }
 
-  static Future<List<App>> _getIosMailApps() async {
-    var installedApps = <_IosApp>[];
+  static Future<List<MailApp>> _getIosMailApps() async {
+    var installedApps = <MailApp>[];
     for (var app in _IosLaunchSchemes.mailApps) {
       if (await canLaunch(app.iosLaunchScheme)) {
         installedApps.add(app);
       }
     }
-    return installedApps.map((x) => App(name: x.name)).toList();
+    return installedApps;
   }
 }
 
-class App {
-  String name;
+class MailAppPickerDialog extends StatelessWidget {
+  final List<MailApp> mailApps;
 
-  App({
+  const MailAppPickerDialog({Key key, @required this.mailApps})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SimpleDialog(
+      title: Text("Choose Mail App"),
+      children: <Widget>[
+        for (var app in mailApps)
+          SimpleDialogOption(
+            child: Text(app.name),
+            onPressed: () {
+              OpenMailApp.openSpecificMailApp(app);
+              Navigator.pop(context);
+            },
+          ),
+      ],
+    );
+  }
+}
+
+class MailApp {
+  final String name;
+  final String iosLaunchScheme;
+
+  const MailApp({
     this.name,
+    this.iosLaunchScheme,
   });
 
-  factory App.fromJson(Map<String, dynamic> json) => App(
+  factory MailApp.fromJson(Map<String, dynamic> json) => MailApp(
         name: json["name"],
+        iosLaunchScheme: json["iosLaunchScheme"],
       );
 
   Map<String, dynamic> toJson() => {
         "name": name,
+        "iosLaunchScheme": iosLaunchScheme,
       };
 }
 
-class _IosApp {
-  final String name;
-  final String iosLaunchScheme;
+class OpenMailAppResult {
+  final bool didOpen;
+  final List<MailApp> options;
+  bool get canOpen => options.isNotEmpty;
 
-  const _IosApp(this.name, this.iosLaunchScheme);
+  OpenMailAppResult({@required this.didOpen, this.options});
 }
 
 class _IosLaunchSchemes {
+  _IosLaunchSchemes._();
+
   static const apple = 'message://';
   static const gmail = 'googlegmail://';
   static const dispatch = 'x-dispatch://';
@@ -80,13 +129,13 @@ class _IosLaunchSchemes {
   static const fastmail = 'fastmail://';
 
   static const mailApps = [
-    _IosApp('Mail', apple),
-    _IosApp('Gmail', gmail),
-    _IosApp('Dispatch', dispatch),
-    _IosApp('Spark', spark),
-    _IosApp('Airmail', airmail),
-    _IosApp('Outlook', outlook),
-    _IosApp('Yahoo', yahoo),
-    _IosApp('Fastmail', fastmail),
+    MailApp(name: 'Mail', iosLaunchScheme: apple),
+    MailApp(name: 'Gmail', iosLaunchScheme: gmail),
+    MailApp(name: 'Dispatch', iosLaunchScheme: dispatch),
+    MailApp(name: 'Spark', iosLaunchScheme: spark),
+    MailApp(name: 'Airmail', iosLaunchScheme: airmail),
+    MailApp(name: 'Outlook', iosLaunchScheme: outlook),
+    MailApp(name: 'Yahoo', iosLaunchScheme: yahoo),
+    MailApp(name: 'Fastmail', iosLaunchScheme: fastmail),
   ];
 }

@@ -22,9 +22,24 @@ class MyApp extends StatelessWidget {
             RaisedButton(
               child: Text("Open Mail App"),
               onPressed: () async {
+                // Android: Will open mail app or show native picker
+                // iOS: Will open mail app if single mail app found
                 var result = await OpenMailApp.openMailApp();
-                if (!result) {
+
+                // If no mail apps found, show error
+                if (!result.didOpen && !result.canOpen) {
                   showNoMailAppsDialog(context);
+
+                  //iOS: if multiple mail apps found, show dialog to select
+                } else if (result.canOpen) {
+                  showDialog(
+                    context: context,
+                    builder: (_) {
+                      return MailAppPickerDialog(
+                        mailApps: result.options,
+                      );
+                    },
+                  );
                 }
               },
             ),
