@@ -93,15 +93,16 @@ class OpenMailAppPlugin : FlutterPlugin, MethodCallHandler {
             for (i in 1 until activitiesHandlingEmails.size) {
                 val activityHandlingEmail = activitiesHandlingEmails[i]
                 val packageName = activityHandlingEmail.activityInfo.packageName
-                val intent = packageManager.getLaunchIntentForPackage(packageName)
-                emailInboxIntents.add(
-                        LabeledIntent(
-                                intent,
-                                packageName,
-                                activityHandlingEmail.loadLabel(packageManager),
-                                activityHandlingEmail.icon
-                        )
-                )
+                packageManager.getLaunchIntentForPackage(packageName)?.let { intent ->
+                    emailInboxIntents.add(
+                            LabeledIntent(
+                                    intent,
+                                    packageName,
+                                    activityHandlingEmail.loadLabel(packageManager),
+                                    activityHandlingEmail.icon
+                            )
+                    )
+                }
             }
             val extraEmailInboxIntents = emailInboxIntents.toTypedArray()
             val finalIntent = emailAppChooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraEmailInboxIntents)
