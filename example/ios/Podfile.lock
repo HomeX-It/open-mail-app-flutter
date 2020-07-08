@@ -4,6 +4,8 @@ PODS:
     - Flutter
   - url_launcher (0.0.1):
     - Flutter
+  - url_launcher_linux (0.0.1):
+    - Flutter
   - url_launcher_macos (0.0.1):
     - Flutter
   - url_launcher_web (0.0.1):
@@ -13,6 +15,7 @@ DEPENDENCIES:
   - Flutter (from `Flutter`)
   - open_mail_app (from `.symlinks/plugins/open_mail_app/ios`)
   - url_launcher (from `.symlinks/plugins/url_launcher/ios`)
+  - url_launcher_linux (from `.symlinks/plugins/url_launcher_linux/ios`)
   - url_launcher_macos (from `.symlinks/plugins/url_launcher_macos/ios`)
   - url_launcher_web (from `.symlinks/plugins/url_launcher_web/ios`)
 
@@ -23,6 +26,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/open_mail_app/ios"
   url_launcher:
     :path: ".symlinks/plugins/url_launcher/ios"
+  url_launcher_linux:
+    :path: ".symlinks/plugins/url_launcher_linux/ios"
   url_launcher_macos:
     :path: ".symlinks/plugins/url_launcher_macos/ios"
   url_launcher_web:
@@ -32,9 +37,10 @@ SPEC CHECKSUMS:
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
   open_mail_app: 794172f6a22cd16319d3ddaf45e945b2f74952b0
   url_launcher: 6fef411d543ceb26efce54b05a0a40bfd74cbbef
+  url_launcher_linux: ac237cb7a8058736e4aae38bdbcc748a4b394cc0
   url_launcher_macos: fd7894421cd39320dce5f292fc99ea9270b2a313
   url_launcher_web: e5527357f037c87560776e36436bf2b0288b965c
 
 PODFILE CHECKSUM: c34e2287a9ccaa606aeceab922830efb9a6ff69a
 
-COCOAPODS: 1.9.1
+COCOAPODS: 1.9.3
