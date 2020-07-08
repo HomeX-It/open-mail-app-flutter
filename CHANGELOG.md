@@ -1,3 +1,8 @@
+## 0.0.3
+Thanks to andrzejchm for the following bug fix.
+
+* Fix null pointer exception on Android
+
 ## 0.0.2
 
 * Update description in pubspec
