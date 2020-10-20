@@ -97,7 +97,7 @@ class MailAppPickerDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      title: Text("Choose Mail App"),
+      //title: Text(""),
       children: <Widget>[
         for (var app in mailApps)
           SimpleDialogOption(
