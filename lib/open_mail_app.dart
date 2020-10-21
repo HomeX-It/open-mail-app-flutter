@@ -97,11 +97,10 @@ class MailAppPickerDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      //title: Text(""),
       children: <Widget>[
         for (var app in mailApps)
           SimpleDialogOption(
-            child: Text(app.name),
+            child: Text("${app.name}アプリを開く"),
             onPressed: () {
               OpenMailApp.openSpecificMailApp(app);
               Navigator.pop(context);
@@ -111,6 +110,21 @@ class MailAppPickerDialog extends StatelessWidget {
     );
   }
 }
+/**
+ * 
+ * Dialog(
+      backgroundColor: Colors.transparent,
+      insetPadding: EdgeInsets.all(10),
+      child: Container(
+        width: double.infinity,
+        height: 205.0,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(4),
+          color: AppColor.white,
+        ),
+        padding: EdgeInsets.only(top: 26.0),
+        child: Column(
+ */
 
 class MailApp {
   final String name;
@@ -156,7 +170,7 @@ class _IosLaunchSchemes {
   static const fastmail = 'fastmail://';
 
   static const mailApps = [
-    MailApp(name: 'Mail', iosLaunchScheme: apple),
+    MailApp(name: '「メール」', iosLaunchScheme: apple),
     MailApp(name: 'Gmail', iosLaunchScheme: gmail),
     MailApp(name: 'Dispatch', iosLaunchScheme: dispatch),
     MailApp(name: 'Spark', iosLaunchScheme: spark),
