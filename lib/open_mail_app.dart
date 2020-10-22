@@ -96,6 +96,7 @@ class MailAppPickerDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    /*
     return SimpleDialog(
       children: <Widget>[
         for (var app in mailApps)
@@ -107,24 +108,52 @@ class MailAppPickerDialog extends StatelessWidget {
             },
           ),
       ],
-    );
-  }
-}
-/**
- * 
- * Dialog(
+    );*/
+    return Dialog(
       backgroundColor: Colors.transparent,
       insetPadding: EdgeInsets.all(10),
       child: Container(
         width: double.infinity,
-        height: 205.0,
+        height: mailApps.length*47.5+10,
+        padding: EdgeInsets.symmetric(vertical: 5.0),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(4),
-          color: AppColor.white,
+          borderRadius: BorderRadius.circular(8),
+          color: Colors.white,
         ),
-        padding: EdgeInsets.only(top: 26.0),
         child: Column(
- */
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: mailApps.length,
+              itemBuilder: (BuildContext context, int index) {
+                return GestureDetector(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 5.0),
+                        child: Text(
+                          "${mailApps[index].name}アプリを開く",
+                          style: TextStyle(fontSize: 16.0),
+                        ),
+                      ),
+                      (mailApps.length-1 != index) ? Divider(color: Color(0xFF374142)) : Container(),
+                    ],
+                  ),
+                  onTap: () {
+                    OpenMailApp.openSpecificMailApp(mailApps[index]);
+                    Navigator.pop(context);
+                  },
+                );
+              }
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class MailApp {
   final String name;
