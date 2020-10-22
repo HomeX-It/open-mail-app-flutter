@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:funwork/configs/AppColor.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Provides ability to query device for installed email apps and open those
@@ -96,19 +97,6 @@ class MailAppPickerDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    /*
-    return SimpleDialog(
-      children: <Widget>[
-        for (var app in mailApps)
-          SimpleDialogOption(
-            child: Text("${app.name}アプリを開く"),
-            onPressed: () {
-              OpenMailApp.openSpecificMailApp(app);
-              Navigator.pop(context);
-            },
-          ),
-      ],
-    );*/
     return Dialog(
       backgroundColor: Colors.transparent,
       insetPadding: EdgeInsets.all(10),
@@ -119,6 +107,15 @@ class MailAppPickerDialog extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
           color: Colors.white,
+          /*
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+              color: Color(0xFFA4B6B8),
+              blurRadius: 1,
+              offset: Offset(0, 1.0),
+            )
+          ],
+          */
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -138,7 +135,7 @@ class MailAppPickerDialog extends StatelessWidget {
                           style: TextStyle(fontSize: 16.0),
                         ),
                       ),
-                      (mailApps.length-1 != index) ? Divider(color: Color(0xFF374142)) : Container(),
+                      (mailApps.length-1 != index) ? Divider(color: AppColor.gray[200]) : Container(),
                     ],
                   ),
                   onTap: () {
