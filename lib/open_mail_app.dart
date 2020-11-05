@@ -91,8 +91,9 @@ class OpenMailApp {
 /// list of mail apps installed on the device.
 class MailAppPickerDialog extends StatelessWidget {
   final List<MailApp> mailApps;
+  final String dialogText;
 
-  const MailAppPickerDialog({Key key, @required this.mailApps})
+  const MailAppPickerDialog({Key key, @required this.mailApps, @required this.dialogText})
       : super(key: key);
 
   @override
@@ -131,7 +132,7 @@ class MailAppPickerDialog extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 5.0),
                         child: Text(
-                          "${mailApps[index].name}アプリを開く",
+                          "${mailApps[index].name} ${dialogText}",
                           style: TextStyle(fontSize: 16.0),
                         ),
                       ),
