@@ -197,7 +197,7 @@ class _IosLaunchSchemes {
   static const fastmail = 'fastmail://';
 
   static const mailApps = [
-    MailApp(name: '「メール」', iosLaunchScheme: apple),
+    MailApp(name: '「Mail」', iosLaunchScheme: apple),
     MailApp(name: 'Gmail', iosLaunchScheme: gmail),
     MailApp(name: 'Dispatch', iosLaunchScheme: dispatch),
     MailApp(name: 'Spark', iosLaunchScheme: spark),
