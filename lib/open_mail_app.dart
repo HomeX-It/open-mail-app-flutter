@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mailto/mailto.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+export 'package:mailto/mailto.dart';
 
 /// Provides ability to query device for installed email apps and open those
 /// apps
@@ -24,14 +26,15 @@ class OpenMailApp {
   /// the user to pick the mail app they want to open.
   ///
   /// Also see [openSpecificMailApp] and [getMailApps] for other use cases.
-  static Future<OpenMailAppResult> openMailApp() async {
+  static Future<OpenMailAppResult> openMailApp({Mailto mailto}) async {
     if (Platform.isAndroid) {
       var result = await _channel.invokeMethod<bool>('openMailApp');
       return OpenMailAppResult(didOpen: result);
     } else if (Platform.isIOS) {
       var apps = await _getIosMailApps();
       if (apps.length == 1) {
-        var result = await launch(apps.first.iosLaunchScheme);
+        var result = await launch(
+            '${apps.first.iosLaunchScheme}${mailto.getMailtoOrEmptyString}');
         return OpenMailAppResult(didOpen: result);
       } else {
         return OpenMailAppResult(didOpen: false, options: apps);
@@ -43,7 +46,8 @@ class OpenMailApp {
 
   /// Attempts to open a specific email app installed on the device.
   /// Get a [MailApp] from calling [getMailApps]
-  static Future<bool> openSpecificMailApp(MailApp mailApp) async {
+  static Future<bool> openSpecificMailApp(MailApp mailApp,
+      {Mailto mailto}) async {
     if (Platform.isAndroid) {
       var result = await _channel.invokeMethod<bool>(
         'openSpecificMailApp',
@@ -51,7 +55,9 @@ class OpenMailApp {
       );
       return result;
     } else if (Platform.isIOS) {
-      return await launch(mailApp.iosLaunchScheme);
+      print('${mailApp.iosLaunchScheme}${'co?subject=Hello&body=Hi'}');
+      return await launch(
+          '${mailApp.iosLaunchScheme}${'co?subject=Hello&body=Hi'}');
     } else {
       throw Exception('Platform not supported');
     }
@@ -90,9 +96,13 @@ class OpenMailApp {
 /// list of mail apps installed on the device.
 class MailAppPickerDialog extends StatelessWidget {
   final List<MailApp> mailApps;
+  final Mailto mailto;
 
-  const MailAppPickerDialog({Key key, @required this.mailApps})
-      : super(key: key);
+  const MailAppPickerDialog({
+    Key key,
+    @required this.mailApps,
+    this.mailto,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +113,7 @@ class MailAppPickerDialog extends StatelessWidget {
           SimpleDialogOption(
             child: Text(app.name),
             onPressed: () {
-              OpenMailApp.openSpecificMailApp(app);
+              OpenMailApp.openSpecificMailApp(app, mailto: mailto);
               Navigator.pop(context);
             },
           ),
@@ -147,7 +157,7 @@ class _IosLaunchSchemes {
   _IosLaunchSchemes._();
 
   static const apple = 'message://';
-  static const gmail = 'googlegmail://';
+  static const gmail = 'googlegmail:///';
   static const dispatch = 'x-dispatch://';
   static const spark = 'readdle-spark://';
   static const airmail = 'airmail://';
@@ -165,4 +175,10 @@ class _IosLaunchSchemes {
     MailApp(name: 'Yahoo', iosLaunchScheme: yahoo),
     MailApp(name: 'Fastmail', iosLaunchScheme: fastmail),
   ];
+}
+
+extension MailtoEx on Mailto {
+  String get getMailtoOrEmptyString {
+    return this?.toString() ?? '';
+  }
 }

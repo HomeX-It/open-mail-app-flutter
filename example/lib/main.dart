@@ -43,6 +43,31 @@ class MyApp extends StatelessWidget {
               },
             ),
             RaisedButton(
+              child: Text("Open Mail App & Send Email"),
+              onPressed: () async {
+                var mailto = Mailto(
+                  to: ['to@example.com'],
+                  subject: 'mailto example subject',
+                  body: 'mailto example body',
+                );
+                var result = await OpenMailApp.openMailApp(mailto: mailto);
+
+                if (!result.didOpen && !result.canOpen) {
+                  showNoMailAppsDialog(context);
+                } else if (!result.didOpen && result.canOpen) {
+                  showDialog(
+                    context: context,
+                    builder: (_) {
+                      return MailAppPickerDialog(
+                        mailApps: result.options,
+                        mailto: mailto,
+                      );
+                    },
+                  );
+                }
+              },
+            ),
+            RaisedButton(
               child: Text("Get Mail Apps"),
               onPressed: () async {
                 var apps = await OpenMailApp.getMailApps();

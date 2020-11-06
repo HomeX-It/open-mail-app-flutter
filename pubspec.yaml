@@ -4,11 +4,12 @@ version: 0.0.3
 homepage: https://github.com/HomeXLabs/open-mail-app-flutter
 
 environment:
-  sdk: ">=2.3.0 <3.0.0"
-  flutter: ">=1.12.0 <2.0.0"
+  sdk: ">=2.6.0 <3.0.0"
+  flutter: ">=1.12.0"
 
 dependencies:
   url_launcher: ^5.5.0
+  mailto: ^1.0.0
   flutter:
     sdk: flutter
 
