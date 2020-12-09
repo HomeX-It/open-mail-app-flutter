@@ -26,12 +26,12 @@ class OpenMailApp {
   /// Also see [openSpecificMailApp] and [getMailApps] for other use cases.
   static Future<OpenMailAppResult> openMailApp() async {
     if (Platform.isAndroid) {
-      var result = await _channel.invokeMethod<bool>('openMailApp');
+      var result = await _channel.invokeMethod<bool>('openMailApp') ?? false;
       return OpenMailAppResult(didOpen: result);
     } else if (Platform.isIOS) {
       var apps = await _getIosMailApps();
       if (apps.length == 1) {
-        var result = await launch(apps.first.iosLaunchScheme);
+        var result = await launch(apps.first.iosLaunchScheme!);
         return OpenMailAppResult(didOpen: result);
       } else {
         return OpenMailAppResult(didOpen: false, options: apps);
@@ -46,12 +46,17 @@ class OpenMailApp {
   static Future<bool> openSpecificMailApp(MailApp mailApp) async {
     if (Platform.isAndroid) {
       var result = await _channel.invokeMethod<bool>(
-        'openSpecificMailApp',
-        <String, dynamic>{'name': mailApp.name},
-      );
+            'openSpecificMailApp',
+            <String, dynamic>{'name': mailApp.name},
+          ) ??
+          false;
       return result;
     } else if (Platform.isIOS) {
-      return await launch(mailApp.iosLaunchScheme);
+      if (mailApp.iosLaunchScheme != null) {
+        return await launch(mailApp.iosLaunchScheme!);
+      }
+
+      return false;
     } else {
       throw Exception('Platform not supported');
     }
@@ -63,9 +68,14 @@ class OpenMailApp {
   static Future<List<MailApp>> getMailApps() async {
     if (Platform.isAndroid) {
       var appsJson = await _channel.invokeMethod<String>('getMainApps');
-      var apps = (jsonDecode(appsJson) as Iterable)
-          .map((x) => MailApp.fromJson(x))
-          .toList();
+      var apps = <MailApp>[];
+
+      if (appsJson != null) {
+        apps = (jsonDecode(appsJson) as Iterable)
+            .map((x) => MailApp.fromJson(x))
+            .toList();
+      }
+
       return apps;
     } else if (Platform.isIOS) {
       return await _getIosMailApps();
@@ -77,7 +87,7 @@ class OpenMailApp {
   static Future<List<MailApp>> _getIosMailApps() async {
     var installedApps = <MailApp>[];
     for (var app in _IosLaunchSchemes.mailApps) {
-      if (await canLaunch(app.iosLaunchScheme)) {
+      if (await canLaunch(app.iosLaunchScheme!)) {
         installedApps.add(app);
       }
     }
@@ -91,7 +101,7 @@ class OpenMailApp {
 class MailAppPickerDialog extends StatelessWidget {
   final List<MailApp> mailApps;
 
-  const MailAppPickerDialog({Key key, @required this.mailApps})
+  const MailAppPickerDialog({Key? key, required this.mailApps})
       : super(key: key);
 
   @override
@@ -101,7 +111,7 @@ class MailAppPickerDialog extends StatelessWidget {
       children: <Widget>[
         for (var app in mailApps)
           SimpleDialogOption(
-            child: Text(app.name),
+            child: Text(app.name ?? ''),
             onPressed: () {
               OpenMailApp.openSpecificMailApp(app);
               Navigator.pop(context);
@@ -113,8 +123,8 @@ class MailAppPickerDialog extends StatelessWidget {
 }
 
 class MailApp {
-  final String name;
-  final String iosLaunchScheme;
+  final String? name;
+  final String? iosLaunchScheme;
 
   const MailApp({
     this.name,
@@ -137,10 +147,11 @@ class MailApp {
 /// [options] and [canOpen] are only populated and used on iOS
 class OpenMailAppResult {
   final bool didOpen;
-  final List<MailApp> options;
+  final List<MailApp>? options;
+
   bool get canOpen => options?.isNotEmpty ?? false;
 
-  OpenMailAppResult({@required this.didOpen, this.options});
+  OpenMailAppResult({required this.didOpen, this.options});
 }
 
 class _IosLaunchSchemes {

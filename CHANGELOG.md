@@ -1,3 +1,7 @@
+## 0.1.0-nullsafety.0
+
+* Migrate to null safety
+
 ## 0.0.3
 Thanks to andrzejchm for the following bug fix.
 
