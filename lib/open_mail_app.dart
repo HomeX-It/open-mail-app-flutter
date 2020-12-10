@@ -31,7 +31,10 @@ class OpenMailApp {
     } else if (Platform.isIOS) {
       var apps = await _getIosMailApps();
       if (apps.length == 1) {
-        var result = await launch(apps.first.iosLaunchScheme!);
+        var result = await launch(
+          apps.first.iosLaunchScheme!,
+          forceSafariVC: false,
+        );
         return OpenMailAppResult(didOpen: result);
       } else {
         return OpenMailAppResult(didOpen: false, options: apps);
@@ -53,7 +56,10 @@ class OpenMailApp {
       return result;
     } else if (Platform.isIOS) {
       if (mailApp.iosLaunchScheme != null) {
-        return await launch(mailApp.iosLaunchScheme!);
+        return await launch(
+          mailApp.iosLaunchScheme!,
+          forceSafariVC: false,
+        );
       }
 
       return false;
