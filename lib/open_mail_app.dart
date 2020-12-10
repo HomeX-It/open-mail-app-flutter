@@ -117,7 +117,7 @@ class MailAppPickerDialog extends StatelessWidget {
       children: <Widget>[
         for (var app in mailApps)
           SimpleDialogOption(
-            child: Text(app.name ?? ''),
+            child: Text(app.name),
             onPressed: () {
               OpenMailApp.openSpecificMailApp(app);
               Navigator.pop(context);
@@ -129,11 +129,11 @@ class MailAppPickerDialog extends StatelessWidget {
 }
 
 class MailApp {
-  final String? name;
+  final String name;
   final String? iosLaunchScheme;
 
   const MailApp({
-    this.name,
+    required this.name,
     this.iosLaunchScheme,
   });
 

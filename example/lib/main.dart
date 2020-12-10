@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
                     context: context,
                     builder: (_) {
                       return MailAppPickerDialog(
-                        mailApps: result.options,
+                        mailApps: result.options!,
                       );
                     },
                   );
