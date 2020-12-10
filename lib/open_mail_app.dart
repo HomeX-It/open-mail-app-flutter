@@ -153,11 +153,14 @@ class MailApp {
 /// [options] and [canOpen] are only populated and used on iOS
 class OpenMailAppResult {
   final bool didOpen;
-  final List<MailApp>? options;
+  final List<MailApp> options;
 
-  bool get canOpen => options?.isNotEmpty ?? false;
+  bool get canOpen => options.isNotEmpty;
 
-  OpenMailAppResult({required this.didOpen, this.options});
+  OpenMailAppResult({
+    required this.didOpen,
+    this.options = const <MailApp>[],
+  });
 }
 
 class _IosLaunchSchemes {
