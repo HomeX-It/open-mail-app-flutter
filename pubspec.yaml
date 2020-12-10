@@ -8,7 +8,7 @@ environment:
   flutter: ">=1.12.0 <2.0.0"
 
 dependencies:
-  url_launcher: ^6.0.0-nullsafety
+  url_launcher: ^6.0.0-nullsafety.1
   flutter:
     sdk: flutter
 
