@@ -2,6 +2,10 @@
 
 * Migrate to null safety
 
+## 0.0.5
+
+* Fixed MailApp name being null when building on Android when minifyEnabled is set to true
+
 ## 0.0.3
 Thanks to andrzejchm for the following bug fix.
 

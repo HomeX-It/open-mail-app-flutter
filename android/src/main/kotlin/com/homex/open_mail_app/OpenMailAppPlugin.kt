@@ -6,6 +6,7 @@ import android.content.pm.LabeledIntent
 import android.net.Uri
 import androidx.annotation.NonNull
 import com.google.gson.Gson
+import com.google.gson.annotations.SerializedName
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
@@ -150,4 +151,6 @@ class OpenMailAppPlugin : FlutterPlugin, MethodCallHandler {
     }
 }
 
-data class App(val name: String)
+data class App(
+        @SerializedName("name") val name: String
+)
