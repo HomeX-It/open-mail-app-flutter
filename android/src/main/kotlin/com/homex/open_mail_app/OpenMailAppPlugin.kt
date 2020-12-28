@@ -52,7 +52,7 @@ class OpenMailAppPlugin : FlutterPlugin, MethodCallHandler {
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
         if (call.method == "openMailApp") {
-            val opened = emailAppIntent()
+            val opened = emailAppIntent(call.argument("chooserTitle")!!)
             if (opened) {
                 result.success(true)
             } else {
@@ -78,7 +78,7 @@ class OpenMailAppPlugin : FlutterPlugin, MethodCallHandler {
         channel.setMethodCallHandler(null)
     }
 
-    private fun emailAppIntent(): Boolean {
+    private fun emailAppIntent(@NonNull chooserTitle: String): Boolean {
         val emailIntent = Intent(Intent.ACTION_VIEW, Uri.parse("mailto:"))
         val packageManager = applicationContext.packageManager
 
@@ -87,7 +87,7 @@ class OpenMailAppPlugin : FlutterPlugin, MethodCallHandler {
             // use the first email package to create the chooserIntent
             val firstEmailPackageName = activitiesHandlingEmails.first().activityInfo.packageName
             val firstEmailInboxIntent = packageManager.getLaunchIntentForPackage(firstEmailPackageName)
-            val emailAppChooserIntent = Intent.createChooser(firstEmailInboxIntent, "")
+            val emailAppChooserIntent = Intent.createChooser(firstEmailInboxIntent, chooserTitle)
 
             // created UI for other email packages and add them to the chooser
             val emailInboxIntents = mutableListOf<LabeledIntent>()

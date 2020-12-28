@@ -24,9 +24,12 @@ class OpenMailApp {
   /// the user to pick the mail app they want to open.
   ///
   /// Also see [openSpecificMailApp] and [getMailApps] for other use cases.
-  static Future<OpenMailAppResult> openMailApp() async {
+  static Future<OpenMailAppResult> openMailApp({String chooserTitle = ''}) async {
     if (Platform.isAndroid) {
-      var result = await _channel.invokeMethod<bool>('openMailApp');
+      var result = await _channel.invokeMethod<bool>(
+        'openMailApp',
+        <String, dynamic>{'chooserTitle': chooserTitle},
+      );
       return OpenMailAppResult(didOpen: result);
     } else if (Platform.isIOS) {
       var apps = await _getIosMailApps();
