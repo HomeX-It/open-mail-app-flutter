@@ -24,11 +24,14 @@ class OpenMailApp {
   /// the user to pick the mail app they want to open.
   ///
   /// Also see [openSpecificMailApp] and [getMailApps] for other use cases.
-  static Future<OpenMailAppResult> openMailApp({String chooserTitle = ''}) async {
+  ///
+  /// Android: [nativePickerTitle] will set the title of the native picker.
+  static Future<OpenMailAppResult> openMailApp(
+      {String nativePickerTitle = ''}) async {
     if (Platform.isAndroid) {
       var result = await _channel.invokeMethod<bool>(
         'openMailApp',
-        <String, dynamic>{'chooserTitle': chooserTitle},
+        <String, dynamic>{'nativePickerTitle': nativePickerTitle},
       );
       return OpenMailAppResult(didOpen: result);
     } else if (Platform.isIOS) {
@@ -92,15 +95,22 @@ class OpenMailApp {
 /// Use with [OpenMailApp.getMailApps] or [OpenMailApp.openMailApp] to get a
 /// list of mail apps installed on the device.
 class MailAppPickerDialog extends StatelessWidget {
+  /// The title of the dialog
+  final String title;
+
+  /// The mail apps for the dialog to provide as options
   final List<MailApp> mailApps;
 
-  const MailAppPickerDialog({Key key, @required this.mailApps})
-      : super(key: key);
+  const MailAppPickerDialog({
+    Key key,
+    this.title = 'Choose Mail App',
+    @required this.mailApps,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SimpleDialog(
-      title: Text("Choose Mail App"),
+      title: Text(title),
       children: <Widget>[
         for (var app in mailApps)
           SimpleDialogOption(

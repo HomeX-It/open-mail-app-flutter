@@ -52,7 +52,7 @@ class OpenMailAppPlugin : FlutterPlugin, MethodCallHandler {
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
         if (call.method == "openMailApp") {
-            val opened = emailAppIntent(call.argument("chooserTitle")!!)
+            val opened = emailAppIntent(call.argument("nativePickerTitle") ?: "")
             if (opened) {
                 result.success(true)
             } else {
