@@ -1,3 +1,9 @@
+## 0.1.0-nullsafety.1
+Thanks to nerder for the following feature
+
+* Added the option to set the title of the native picker for Android
+* Added title parameter for MailAppPickerDialog
+
 ## 0.1.0-nullsafety.0
 
 * Migrate to null safety

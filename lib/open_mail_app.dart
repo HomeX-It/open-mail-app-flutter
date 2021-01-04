@@ -30,9 +30,10 @@ class OpenMailApp {
       {String nativePickerTitle = ''}) async {
     if (Platform.isAndroid) {
       var result = await _channel.invokeMethod<bool>(
-        'openMailApp',
-        <String, dynamic>{'nativePickerTitle': nativePickerTitle},
-      );
+            'openMailApp',
+            <String, dynamic>{'nativePickerTitle': nativePickerTitle},
+          ) ??
+          false;
       return OpenMailAppResult(didOpen: result);
     } else if (Platform.isIOS) {
       var apps = await _getIosMailApps();
@@ -118,9 +119,9 @@ class MailAppPickerDialog extends StatelessWidget {
   final List<MailApp> mailApps;
 
   const MailAppPickerDialog({
-    Key key,
+    Key? key,
     this.title = 'Choose Mail App',
-    @required this.mailApps,
+    required this.mailApps,
   }) : super(key: key);
 
   @override
