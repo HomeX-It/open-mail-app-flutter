@@ -21,7 +21,9 @@ class MyApp extends StatelessWidget {
               onPressed: () async {
                 // Android: Will open mail app or show native picker.
                 // iOS: Will open mail app if single mail app found.
-                var result = await OpenMailApp.openMailApp();
+                var result = await OpenMailApp.openMailApp(
+                  nativePickerTitle: 'Select email app to open',
+                );
 
                 // If no mail apps found, show error
                 if (!result.didOpen && !result.canOpen) {
