@@ -1,3 +1,8 @@
+## 0.0.7
+Thanks to PrinceGoyal for the following improvement
+
+* Update gradle to 6.7.1 from 5.6.2
+
 ## 0.0.6
 Thanks to nerder for the following feature
 
