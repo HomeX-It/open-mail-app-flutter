@@ -62,6 +62,34 @@ class MyApp extends StatelessWidget {
                 }
               },
             ),
+            RaisedButton(
+              child: Text("Compose from Mail App"),
+              onPressed: () async {
+                // Android: Will open mail app or show native picker.
+                // iOS: Will open mail app if single mail app found.
+                var result = await OpenMailApp.openMailApp(
+                  nativePickerTitle: 'Select email app to compose from',
+                );
+
+                // If no mail apps found, show error
+                if (!result.didOpen && !result.canOpen) {
+                  showNoMailAppsDialog(context);
+
+                  // iOS: if multiple mail apps found, show dialog to select.
+                  // There is no native intent/default app system in iOS so
+                  // you have to do it yourself.
+                } else if (!result.didOpen && result.canOpen) {
+                  showDialog(
+                    context: context,
+                    builder: (_) {
+                      return MailAppPickerToComposeDialog(
+                        mailApps: result.options,
+                      );
+                    },
+                  );
+                }
+              },
+            ),
           ],
         ),
       ),

@@ -63,6 +63,49 @@ class OpenMailApp {
     }
   }
 
+  /// Attempts to open a specific email app installed on the device.
+  /// Get a [MailApp] from calling [getMailApps]
+  static Future<bool> composeFromSpecificMailApp(MailApp mailApp,
+      {String message, String recipient, String subject}) async {
+    if (Platform.isAndroid) {
+      var result = await _channel.invokeMethod<bool>(
+        'openSpecificMailApp',
+        <String, dynamic>{'name': mailApp.name},
+      );
+      return result;
+    } else if (Platform.isIOS) {
+      if (mailApp.name == 'Outlook') {
+        return await launch(
+            '${mailApp.iosLaunchScheme}compose?to=$recipient&subject=$subject&body=$message');
+      } else if (mailApp.name == 'Gmail') {
+        return await launch(
+            '${mailApp.iosLaunchScheme}/co?to=$recipient&subject=$subject&body=$message');
+      } else if (mailApp.name == 'Spark') {
+        return await launch(
+            '${mailApp.iosLaunchScheme}compose?recipient=$recipient&subject=$subject&body=$message');
+      } else if (mailApp.name == 'Yahoo') {
+        return await launch(
+            '${mailApp.iosLaunchScheme}compose?to=$recipient&subject=$subject&body=$message');
+      } else if (mailApp.name == 'Fastmail') {
+        return await launch(
+            '${mailApp.iosLaunchScheme}mail/compose?to=$recipient&subject=$subject&body=$message');
+      } else if (mailApp.name == 'Default Mail App') {
+        return await launch(
+            'mailto:?to=$recipient&subject=$subject&body=$message');
+      } else if (mailApp.name == 'Dispatch') {
+        return await launch(
+            '${mailApp.iosLaunchScheme}/compose?to=$recipient&subject=$subject&body=$message');
+      } else if (mailApp.name == 'Airmail') {
+        return await launch(
+            '${mailApp.iosLaunchScheme}compose?to=$recipient&subject=$subject&plainBody=$message');
+      } else {
+        return await launch(mailApp.iosLaunchScheme);
+      }
+    } else {
+      throw Exception('Platform not supported');
+    }
+  }
+
   /// Returns a list of installed email apps on the device
   ///
   /// iOS: [MailApp.iosLaunchScheme] will be populated
@@ -117,6 +160,44 @@ class MailAppPickerDialog extends StatelessWidget {
             child: Text(app.name),
             onPressed: () {
               OpenMailApp.openSpecificMailApp(app);
+              Navigator.pop(context);
+            },
+          ),
+      ],
+    );
+  }
+}
+
+class MailAppPickerToComposeDialog extends StatelessWidget {
+  /// The title of the dialog
+  final String title;
+  final String message;
+  final String recipient;
+  final String subject;
+
+  /// The mail apps for the dialog to provide as options
+  final List<MailApp> mailApps;
+
+  const MailAppPickerToComposeDialog({
+    Key key,
+    this.title = 'Choose Mail App',
+    this.message,
+    this.subject,
+    this.recipient,
+    @required this.mailApps,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SimpleDialog(
+      title: Text(title),
+      children: <Widget>[
+        for (var app in mailApps)
+          SimpleDialogOption(
+            child: Text(app.name),
+            onPressed: () {
+              OpenMailApp.composeFromSpecificMailApp(app,
+                  message: message, recipient: recipient, subject: subject);
               Navigator.pop(context);
             },
           ),
