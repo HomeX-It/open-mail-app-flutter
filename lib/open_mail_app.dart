@@ -63,7 +63,7 @@ class OpenMailApp {
     }
   }
 
-  /// Attempts to open a specific email app installed on the device.
+  /// Attempts to open a specific email app installed on the device, and pre-fill the compose screen with user-generated fields.
   /// Get a [MailApp] from calling [getMailApps]
   static Future<bool> composeFromSpecificMailApp(MailApp mailApp,
       {String message, String recipient, String subject}) async {
