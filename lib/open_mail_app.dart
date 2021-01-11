@@ -85,7 +85,7 @@ class OpenMailApp {
             '${mailApp.iosLaunchScheme}compose?recipient=$recipient&subject=$subject&body=$message');
       } else if (mailApp.name == 'Yahoo') {
         return await launch(
-            '${mailApp.iosLaunchScheme}compose?to=$recipient&subject=$subject&body=$message');
+            '${mailApp.iosLaunchScheme}mail/compose?to=$recipient&subject=$subject&body=$message');
       } else if (mailApp.name == 'Fastmail') {
         return await launch(
             '${mailApp.iosLaunchScheme}mail/compose?to=$recipient&subject=$subject&body=$message');
