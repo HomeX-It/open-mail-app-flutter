@@ -1,3 +1,8 @@
+## 0.1.0-nullsafety.3
+Thanks to martyfuhry for the following fix
+
+* Fixed opening mail apps not working on Android when targetSdkVersion is 30
+
 ## 0.1.0-nullsafety.2
 Thanks to PrinceGoyal for the following improvement
 
