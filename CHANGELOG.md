@@ -13,6 +13,11 @@ Thanks to nerder for the following feature
 
 * Migrate to null safety
 
+## 0.0.8
+Thanks to martyfuhry for the following fix
+
+* Fixed opening mail apps not working on Android when targetSdkVersion is 30
+
 ## 0.0.7
 Thanks to PrinceGoyal for the following improvement
 
