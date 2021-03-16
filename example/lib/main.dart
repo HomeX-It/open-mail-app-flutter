@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            RaisedButton(
+            ElevatedButton(
               child: Text("Open Mail App"),
               onPressed: () async {
                 // Android: Will open mail app or show native picker.
@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
                 }
               },
             ),
-            RaisedButton(
+            ElevatedButton(
               child: Text("Get Mail Apps"),
               onPressed: () async {
                 var apps = await OpenMailApp.getMailApps();
@@ -76,7 +76,7 @@ class MyApp extends StatelessWidget {
           title: Text("Open Mail App"),
           content: Text("No mail apps installed"),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
               child: Text("OK"),
               onPressed: () {
                 Navigator.pop(context);

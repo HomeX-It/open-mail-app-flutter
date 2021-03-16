@@ -1,3 +1,6 @@
+## 0.1.0
+* Null safety stable release
+
 ## 0.0.8
 Thanks to martyfuhry for the following fix
 
