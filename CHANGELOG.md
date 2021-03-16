@@ -1,22 +1,5 @@
-## 0.1.0-nullsafety.3
-Thanks to martyfuhry for the following fix
-
-* Fixed opening mail apps not working on Android when targetSdkVersion is 30
-
-## 0.1.0-nullsafety.2
-Thanks to PrinceGoyal for the following improvement
-
-* Update gradle to 6.7.1 from 5.6.2
-
-## 0.1.0-nullsafety.1
-Thanks to nerder for the following feature
-
-* Added the option to set the title of the native picker for Android
-* Added title parameter for MailAppPickerDialog
-
-## 0.1.0-nullsafety.0
-
-* Migrate to null safety
+## 0.1.0
+* Null safety stable release
 
 ## 0.0.8
 Thanks to martyfuhry for the following fix
