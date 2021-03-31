@@ -13,7 +13,7 @@ class OpenMailApp {
   OpenMailApp._();
 
   static const MethodChannel _channel = const MethodChannel('open_mail_app');
-  static List<String> _filterList = <String>[];
+  static List<String> _filterList = <String>['paypal'];
 
   /// Attempts to open an email app installed on the device.
   ///
@@ -118,9 +118,7 @@ class OpenMailApp {
   /// Filterlist is case insensitive. Listed apps will be excluded from the results
   /// of `getMailApps` by name.
   static void setFilterList(List<String> filterList) {
-    var filterListLowerCase = filterList.map((e) => e.toLowerCase()).toList();
-    _filterList.clear();
-    _filterList.addAll(filterListLowerCase);
+    _filterList = filterList.map((e) => e.toLowerCase()).toList();
   }
 }
 
