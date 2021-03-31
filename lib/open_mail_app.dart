@@ -114,9 +114,13 @@ class OpenMailApp {
     return installedApps;
   }
 
-  /// Clears existing filterlist and sets the filterlist to the passed values.
-  /// Filterlist is case insensitive. Listed apps will be excluded from the results
+  /// Clears existing filter list and sets the filter list to the passed values.
+  /// Filter list is case insensitive. Listed apps will be excluded from the results
   /// of `getMailApps` by name.
+  ///
+  /// Default filter list includes PayPal, since it implements the mailto: intent-filter
+  /// on Android, but the intention of this plugin is to provide
+  /// a utility for finding and opening apps dedicated to sending/receiving email.
   static void setFilterList(List<String> filterList) {
     _filterList = filterList.map((e) => e.toLowerCase()).toList();
   }
