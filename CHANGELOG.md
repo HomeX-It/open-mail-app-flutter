@@ -1,4 +1,9 @@
+## 0.1.1
+
+* Added optional list for filtering mail apps by name.
+
 ## 0.1.0
+
 * Null safety stable release
 
 ## 0.0.8

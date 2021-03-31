@@ -13,6 +13,7 @@ class OpenMailApp {
   OpenMailApp._();
 
   static const MethodChannel _channel = const MethodChannel('open_mail_app');
+  static List<String> _filterList = <String>[];
 
   /// Attempts to open an email app installed on the device.
   ///
@@ -80,16 +81,7 @@ class OpenMailApp {
   /// iOS: [MailApp.iosLaunchScheme] will be populated
   static Future<List<MailApp>> getMailApps() async {
     if (Platform.isAndroid) {
-      var appsJson = await _channel.invokeMethod<String>('getMainApps');
-      var apps = <MailApp>[];
-
-      if (appsJson != null) {
-        apps = (jsonDecode(appsJson) as Iterable)
-            .map((x) => MailApp.fromJson(x))
-            .toList();
-      }
-
-      return apps;
+      return await _getAndroidMailApps();
     } else if (Platform.isIOS) {
       return await _getIosMailApps();
     } else {
@@ -97,14 +89,41 @@ class OpenMailApp {
     }
   }
 
+  static Future<List<MailApp>> _getAndroidMailApps() async {
+    var appsJson = await _channel.invokeMethod<String>('getMainApps');
+    var apps = <MailApp>[];
+
+    if (appsJson != null) {
+      apps = (jsonDecode(appsJson) as Iterable)
+          .map((x) => MailApp.fromJson(x))
+          .toList();
+    }
+
+    apps.removeWhere((MailApp app) {
+      return _filterList.contains(app.name.toLowerCase());
+    });
+
+    return apps;
+  }
+
   static Future<List<MailApp>> _getIosMailApps() async {
     var installedApps = <MailApp>[];
     for (var app in _IosLaunchSchemes.mailApps) {
-      if (await canLaunch(app.iosLaunchScheme!)) {
+      if (await canLaunch(app.iosLaunchScheme!) && !_filterList.contains(app.name.toLowerCase())) {
         installedApps.add(app);
       }
     }
     return installedApps;
+  }
+
+  /// Clears existing filterlist and sets the filterlist to the passed values.
+  /// Filterlist is case insensitive. Listed apps will be excluded from the results
+  /// of `getMailApps` by name.
+  static void setFilterList(List<String> filterList) {
+    filterList.forEach((element) {});
+    var filterListLowerCase = filterList.map((e) => e.toLowerCase()).toList();
+    _filterList.clear();
+    _filterList.addAll(filterListLowerCase);
   }
 }
 
