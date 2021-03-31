@@ -96,7 +96,7 @@ class OpenMailApp {
     if (appsJson != null) {
       apps = (jsonDecode(appsJson) as Iterable)
           .map((x) => MailApp.fromJson(x))
-          .where((x) => !_filterList.contains(app.name.toLowerCase()))
+          .where((app) => !_filterList.contains(app.name.toLowerCase()))
           .toList();
     }
 
@@ -106,7 +106,8 @@ class OpenMailApp {
   static Future<List<MailApp>> _getIosMailApps() async {
     var installedApps = <MailApp>[];
     for (var app in _IosLaunchSchemes.mailApps) {
-      if (await canLaunch(app.iosLaunchScheme!) && !_filterList.contains(app.name.toLowerCase())) {
+      if (await canLaunch(app.iosLaunchScheme!) &&
+          !_filterList.contains(app.name.toLowerCase())) {
         installedApps.add(app);
       }
     }
@@ -117,7 +118,6 @@ class OpenMailApp {
   /// Filterlist is case insensitive. Listed apps will be excluded from the results
   /// of `getMailApps` by name.
   static void setFilterList(List<String> filterList) {
-    filterList.forEach((element) {});
     var filterListLowerCase = filterList.map((e) => e.toLowerCase()).toList();
     _filterList.clear();
     _filterList.addAll(filterListLowerCase);
