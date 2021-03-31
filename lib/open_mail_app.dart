@@ -96,12 +96,9 @@ class OpenMailApp {
     if (appsJson != null) {
       apps = (jsonDecode(appsJson) as Iterable)
           .map((x) => MailApp.fromJson(x))
+          .where((x) => !_filterList.contains(app.name.toLowerCase()))
           .toList();
     }
-
-    apps.removeWhere((MailApp app) {
-      return _filterList.contains(app.name.toLowerCase());
-    });
 
     return apps;
   }
