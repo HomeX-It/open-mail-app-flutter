@@ -14,6 +14,7 @@ class OpenMailApp {
   OpenMailApp._();
 
   static const MethodChannel _channel = const MethodChannel('open_mail_app');
+  static List<String> _filterList = <String>['paypal'];
 
   /// Attempts to open an email app installed on the device.
   ///
@@ -25,14 +26,24 @@ class OpenMailApp {
   /// the user to pick the mail app they want to open.
   ///
   /// Also see [openSpecificMailApp] and [getMailApps] for other use cases.
-  static Future<OpenMailAppResult> openMailApp() async {
+  ///
+  /// Android: [nativePickerTitle] will set the title of the native picker.
+  static Future<OpenMailAppResult> openMailApp(
+      {String nativePickerTitle = ''}) async {
     if (Platform.isAndroid) {
-      var result = await _channel.invokeMethod<bool>('openMailApp');
+      var result = await _channel.invokeMethod<bool>(
+            'openMailApp',
+            <String, dynamic>{'nativePickerTitle': nativePickerTitle},
+          ) ??
+          false;
       return OpenMailAppResult(didOpen: result);
     } else if (Platform.isIOS) {
       var apps = await _getIosMailApps();
       if (apps.length == 1) {
-        var result = await launch(apps.first.iosLaunchScheme);
+        var result = await launch(
+          apps.first.iosLaunchScheme!,
+          forceSafariVC: false,
+        );
         return OpenMailAppResult(didOpen: result);
       } else {
         return OpenMailAppResult(didOpen: false, options: apps);
@@ -47,12 +58,20 @@ class OpenMailApp {
   static Future<bool> openSpecificMailApp(MailApp mailApp) async {
     if (Platform.isAndroid) {
       var result = await _channel.invokeMethod<bool>(
-        'openSpecificMailApp',
-        <String, dynamic>{'name': mailApp.name},
-      );
+            'openSpecificMailApp',
+            <String, dynamic>{'name': mailApp.name},
+          ) ??
+          false;
       return result;
     } else if (Platform.isIOS) {
-      return await launch(mailApp.iosLaunchScheme);
+      if (mailApp.iosLaunchScheme != null) {
+        return await launch(
+          mailApp.iosLaunchScheme!,
+          forceSafariVC: false,
+        );
+      }
+
+      return false;
     } else {
       throw Exception('Platform not supported');
     }
@@ -63,11 +82,7 @@ class OpenMailApp {
   /// iOS: [MailApp.iosLaunchScheme] will be populated
   static Future<List<MailApp>> getMailApps() async {
     if (Platform.isAndroid) {
-      var appsJson = await _channel.invokeMethod<String>('getMainApps');
-      var apps = (jsonDecode(appsJson) as Iterable)
-          .map((x) => MailApp.fromJson(x))
-          .toList();
-      return apps;
+      return await _getAndroidMailApps();
     } else if (Platform.isIOS) {
       return await _getIosMailApps();
     } else {
@@ -75,14 +90,40 @@ class OpenMailApp {
     }
   }
 
+  static Future<List<MailApp>> _getAndroidMailApps() async {
+    var appsJson = await _channel.invokeMethod<String>('getMainApps');
+    var apps = <MailApp>[];
+
+    if (appsJson != null) {
+      apps = (jsonDecode(appsJson) as Iterable)
+          .map((x) => MailApp.fromJson(x))
+          .where((app) => !_filterList.contains(app.name.toLowerCase()))
+          .toList();
+    }
+
+    return apps;
+  }
+
   static Future<List<MailApp>> _getIosMailApps() async {
     var installedApps = <MailApp>[];
     for (var app in _IosLaunchSchemes.mailApps) {
-      if (await canLaunch(app.iosLaunchScheme)) {
+      if (await canLaunch(app.iosLaunchScheme!) &&
+          !_filterList.contains(app.name.toLowerCase())) {
         installedApps.add(app);
       }
     }
     return installedApps;
+  }
+
+  /// Clears existing filter list and sets the filter list to the passed values.
+  /// Filter list is case insensitive. Listed apps will be excluded from the results
+  /// of `getMailApps` by name.
+  ///
+  /// Default filter list includes PayPal, since it implements the mailto: intent-filter
+  /// on Android, but the intention of this plugin is to provide
+  /// a utility for finding and opening apps dedicated to sending/receiving email.
+  static void setFilterList(List<String> filterList) {
+    _filterList = filterList.map((e) => e.toLowerCase()).toList();
   }
 }
 
@@ -90,10 +131,13 @@ class OpenMailApp {
 /// Use with [OpenMailApp.getMailApps] or [OpenMailApp.openMailApp] to get a
 /// list of mail apps installed on the device.
 class MailAppPickerDialog extends StatelessWidget {
+  /// The title of the dialog
+
+  /// The mail apps for the dialog to provide as options
   final List<MailApp> mailApps;
   final String dialogText;
 
-  const MailAppPickerDialog({Key key, @required this.mailApps, @required this.dialogText})
+  const MailAppPickerDialog({Key? key, required this.mailApps, required this.dialogText})
       : super(key: key);
 
   @override
@@ -155,10 +199,10 @@ class MailAppPickerDialog extends StatelessWidget {
 
 class MailApp {
   final String name;
-  final String iosLaunchScheme;
+  final String? iosLaunchScheme;
 
   const MailApp({
-    this.name,
+    required this.name,
     this.iosLaunchScheme,
   });
 
@@ -179,9 +223,13 @@ class MailApp {
 class OpenMailAppResult {
   final bool didOpen;
   final List<MailApp> options;
-  bool get canOpen => options?.isNotEmpty ?? false;
 
-  OpenMailAppResult({@required this.didOpen, this.options});
+  bool get canOpen => options.isNotEmpty;
+
+  OpenMailAppResult({
+    required this.didOpen,
+    this.options = const <MailApp>[],
+  });
 }
 
 class _IosLaunchSchemes {

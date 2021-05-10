@@ -16,12 +16,14 @@ class MyApp extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-            RaisedButton(
+            ElevatedButton(
               child: Text("Open Mail App"),
               onPressed: () async {
                 // Android: Will open mail app or show native picker.
                 // iOS: Will open mail app if single mail app found.
-                var result = await OpenMailApp.openMailApp();
+                var result = await OpenMailApp.openMailApp(
+                  nativePickerTitle: 'Select email app to open',
+                );
 
                 // If no mail apps found, show error
                 if (!result.didOpen && !result.canOpen) {
@@ -42,7 +44,7 @@ class MyApp extends StatelessWidget {
                 }
               },
             ),
-            RaisedButton(
+            ElevatedButton(
               child: Text("Get Mail Apps"),
               onPressed: () async {
                 var apps = await OpenMailApp.getMailApps();
@@ -74,7 +76,7 @@ class MyApp extends StatelessWidget {
           title: Text("Open Mail App"),
           content: Text("No mail apps installed"),
           actions: <Widget>[
-            FlatButton(
+            TextButton(
               child: Text("OK"),
               onPressed: () {
                 Navigator.pop(context);
