@@ -126,7 +126,8 @@ class OpenMailApp {
     _filterList = filterList.map((e) => e.toLowerCase()).toList();
   }
 
-  /// Shows Platform specific dialogs with existing mail apps installed
+  /// Shows platform specific dialogs with existing mail apps installed
+  /// `title` will not be shown for iOS Devices
   static void showMailAppList(
     BuildContext context,
     List<MailApp> mailApps, {
@@ -152,7 +153,7 @@ class OpenMailApp {
           );
   }
 
-  /// Shows Platform specific alert dialogs
+  /// Shows platform specific alert dialogs
   static void showNoMailAppsDialog(
     BuildContext context, {
     String title = 'Open Mail App',
