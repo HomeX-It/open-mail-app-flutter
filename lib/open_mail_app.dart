@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -124,6 +125,71 @@ class OpenMailApp {
   static void setFilterList(List<String> filterList) {
     _filterList = filterList.map((e) => e.toLowerCase()).toList();
   }
+
+  /// Shows Platform specific dialogs with existing mail apps installed
+  static void showMailAppList(
+    BuildContext context,
+    List<MailApp> mailApps, {
+    String title = 'Choose Mail App',
+  }) {
+    Platform.isIOS
+        ? showCupertinoModalPopup(
+            context: context,
+            builder: (_) {
+              return MailAppPickerDialog(
+                mailApps: mailApps,
+                title: title,
+              );
+            },
+          )
+        : showDialog(
+            context: context,
+            builder: (_) {
+              return MailAppPickerDialog(
+                mailApps: mailApps,
+              );
+            },
+          );
+  }
+
+  /// Shows Platform specific alert dialogs
+  static void showNoMailAppsDialog(
+    BuildContext context, {
+    String title = 'Open Mail App',
+    String content = 'No mail apps installed',
+  }) {
+    Platform.isIOS
+        ? showCupertinoDialog(
+            context: context,
+            builder: (ctx) {
+              return CupertinoAlertDialog(
+                title: Text(title),
+                content: Text(content),
+                actions: <Widget>[
+                  CupertinoDialogAction(
+                    child: Text("OK"),
+                    onPressed: () => Navigator.pop(ctx),
+                  )
+                ],
+              );
+            },
+          )
+        : showDialog(
+            context: context,
+            builder: (ctx) {
+              return AlertDialog(
+                title: Text(title),
+                content: Text(content),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text("OK"),
+                    onPressed: () => Navigator.pop(ctx),
+                  )
+                ],
+              );
+            },
+          );
+  }
 }
 
 /// A simple dialog for allowing the user to pick and open an email app
@@ -144,19 +210,38 @@ class MailAppPickerDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SimpleDialog(
-      title: Text(title),
-      children: <Widget>[
-        for (var app in mailApps)
-          SimpleDialogOption(
-            child: Text(app.name),
-            onPressed: () {
-              OpenMailApp.openSpecificMailApp(app);
-              Navigator.pop(context);
-            },
-          ),
-      ],
-    );
+    return Platform.isIOS
+        ? CupertinoActionSheet(
+            actions: mailApps
+                .map(
+                  (app) => CupertinoActionSheetAction(
+                    child: Text(app.name),
+                    isDefaultAction: true,
+                    onPressed: () {
+                      OpenMailApp.openSpecificMailApp(app);
+                      Navigator.pop(context);
+                    },
+                  ),
+                )
+                .toList(),
+            cancelButton: CupertinoActionSheetAction(
+              child: Text("Cancel"),
+              onPressed: () => Navigator.pop(context),
+            ),
+          )
+        : SimpleDialog(
+            title: Text(title),
+            children: <Widget>[
+              for (var app in mailApps)
+                SimpleDialogOption(
+                  child: Text(app.name),
+                  onPressed: () {
+                    OpenMailApp.openSpecificMailApp(app);
+                    Navigator.pop(context);
+                  },
+                ),
+            ],
+          );
   }
 }
 
