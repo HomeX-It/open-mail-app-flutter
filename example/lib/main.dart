@@ -27,20 +27,13 @@ class MyApp extends StatelessWidget {
 
                 // If no mail apps found, show error
                 if (!result.didOpen && !result.canOpen) {
-                  showNoMailAppsDialog(context);
+                  OpenMailApp.showNoMailAppsDialog(context);
 
                   // iOS: if multiple mail apps found, show dialog to select.
                   // There is no native intent/default app system in iOS so
                   // you have to do it yourself.
                 } else if (!result.didOpen && result.canOpen) {
-                  showDialog(
-                    context: context,
-                    builder: (_) {
-                      return MailAppPickerDialog(
-                        mailApps: result.options,
-                      );
-                    },
-                  );
+                  OpenMailApp.showMailAppList(context, result.options);
                 }
               },
             ),
@@ -49,42 +42,15 @@ class MyApp extends StatelessWidget {
               onPressed: () async {
                 var apps = await OpenMailApp.getMailApps();
                 if (apps.isEmpty) {
-                  showNoMailAppsDialog(context);
+                  OpenMailApp.showNoMailAppsDialog(context);
                 } else {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return MailAppPickerDialog(
-                        mailApps: apps,
-                      );
-                    },
-                  );
+                  OpenMailApp.showMailAppList(context, apps);
                 }
               },
             ),
           ],
         ),
       ),
-    );
-  }
-
-  void showNoMailAppsDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text("Open Mail App"),
-          content: Text("No mail apps installed"),
-          actions: <Widget>[
-            TextButton(
-              child: Text("OK"),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            )
-          ],
-        );
-      },
     );
   }
 }
