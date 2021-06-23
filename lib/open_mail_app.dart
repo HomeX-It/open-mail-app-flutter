@@ -206,6 +206,7 @@ class _IosLaunchSchemes {
   static const outlook = 'ms-outlook://';
   static const yahoo = 'ymail://';
   static const fastmail = 'fastmail://';
+  static const superhuman = 'superhuman://';
 
   static const mailApps = [
     MailApp(name: 'Mail', iosLaunchScheme: apple),
@@ -216,5 +217,6 @@ class _IosLaunchSchemes {
     MailApp(name: 'Outlook', iosLaunchScheme: outlook),
     MailApp(name: 'Yahoo', iosLaunchScheme: yahoo),
     MailApp(name: 'Fastmail', iosLaunchScheme: fastmail),
+    MailApp(name: 'Superhuman', iosLaunchScheme: superhuman),
   ];
 }
