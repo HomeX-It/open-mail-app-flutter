@@ -45,9 +45,37 @@ class MyApp extends StatelessWidget {
               },
             ),
             ElevatedButton(
+              child: Text('Open mail app, with email already composed'),
+              onPressed: () async {
+                EmailContent email = EmailContent(
+                  to: [
+                    'user@localhost',
+                  ],
+                  subject: 'Hello!',
+                  body: 'How are you doing?',
+                  cc: ['user2@localhost', 'user3@localhost'],
+                  bcc: ['boss@localhost'],
+                );
+
+                OpenMailAppResult result = await OpenMailApp.composeNewEmailInMailApp(emailContent: email);
+                if (!result.didOpen && !result.canOpen) {
+                  showNoMailAppsDialog(context);
+                } else if (!result.didOpen && result.canOpen) {
+                  showDialog(
+                    context: context,
+                    builder: (_) => MailAppPickerDialog(
+                      mailApps: result.options,
+                      emailContent: email,
+                    ),
+                  );
+                }
+              },
+            ),
+            ElevatedButton(
               child: Text("Get Mail Apps"),
               onPressed: () async {
                 var apps = await OpenMailApp.getMailApps();
+
                 if (apps.isEmpty) {
                   showNoMailAppsDialog(context);
                 } else {
