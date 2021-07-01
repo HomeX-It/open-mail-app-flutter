@@ -427,9 +427,10 @@ class EmailContent {
   final List<String> cc;
   final List<String> bcc;
   final String _subject;
-  String get subject => Uri.encodeComponent(_subject);
+  String get subject =>
+      Platform.isIOS ? Uri.encodeComponent(_subject) : _subject;
   final String _body;
-  String get body => Uri.encodeComponent(_body);
+  String get body => Platform.isIOS ? Uri.encodeComponent(_body) : _body;
 
   EmailContent({
     List<String>? to,
