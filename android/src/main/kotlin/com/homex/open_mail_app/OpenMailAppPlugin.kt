@@ -65,6 +65,20 @@ class OpenMailAppPlugin : FlutterPlugin, MethodCallHandler {
             } else {
                 result.success(false)
             }
+        } else if (call.method == "composeNewEmailInMailApp") {
+            val opened = composeNewEmailAppIntent(call.argument("nativePickerTitle") ?: "", call.argument("emailContent"))
+            if (opened) {
+                result.success(true)
+            } else {
+                result.success(false)
+            }
+        } else if (call.method == "composeNewEmailInSpecificMailApp") {
+            val openend = composeNewEmailInSpecificEmailAppIntent(call.argument("name"), call.argument("emailContent"))
+            if (opened) {
+                result.success(true);
+            } else {
+                result.succes(false);
+            }
         } else if (call.method == "getMainApps") {
             val apps = getInstalledMailApps()
             val appsJson = Gson().toJson(apps)
@@ -115,6 +129,55 @@ class OpenMailAppPlugin : FlutterPlugin, MethodCallHandler {
         }
     }
 
+    private fun composeNewEmailAppIntent(@NonNull chooserTitle: String, @NonNull contentJson: string): Boolean {
+        val packageManager = applicationContext.packageManager
+        val emailContent = Gson().fromJson(contentJson, EmailContent::class.java)
+        val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
+            data = Uri.parse("mailto:")
+            putExtra(Intent.EXTRA_EMAIL, emailContent.to)
+            putExtra(Intent.EXTRA_CC, emailContent.cc)
+            putExtra(Intent.EXTRA_BCC, emailContent.bcc)
+            putExtra(Intent.EXTRA_SUBJECT, emailContent.subject)
+            putExtra(Intent.EXTRA_TEXT, emailContent.body)
+        }
+
+        val activitiesHandlingEmails = packageManager.queryIntentActivities(emailIntent, 0)
+        if (activitiesHandlingEmails.isNotEmpty()) {
+            val firstEmailPackageName = activitiesHandlingEmails.first().activityInfo.packageName
+            val firstEmailComposeIntent = packageManager.getLaunchIntentForPackage(firstEmailPackageName)
+            val emailAppChooserIntent = Intent.createChooser(firstEmailComposeIntent, chooserTitle)
+
+            val emailComposingIntents = mutableListOf<LabeledIntent>()
+            for (i in 1 until activitiesHandlingEmails.size) {
+                val activityHandlingEmail = activitiesHandlingEmails[i]
+                val packageName = activityHandlingEmail.activityInfo.packageName
+                packageManager.getLaunchIntentForPackage(packageName)?.let { intent ->
+                    emailComposingIntents.add(
+                        intent.putExtra(Intent.EXTRA_EMAIL, emailContent.to)
+                        intent.putExtra(Intent.EXTRA_CC, emailContent.cc)
+                        intent.putExtra(Intent.EXTRA_BCC, emailContent.bcc)
+                        intent.putExtra(Intent.EXTRA_SUBJECT, emailContent.subject)
+                        intent.putExtra(Intent.EXTRA_TEXT, emailContent.body)
+                        LabeledIntent(
+                            intent  
+                            packageName, 
+                            activityHandlingEmail.loadLabel(packageManager),
+                            activityHandlingEmail.icon
+                        ), 
+                    )
+                }
+            }
+
+            val extraEmailComposingIntents = mutableListOf<LabeledIntent>()
+            val finalIntent = emailAppChooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraEmailInboxIntents)
+            finalIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            applicationContext.startActivity(finalIntent)
+            return true;
+        } else {
+            return false
+        }
+    }
+
     private fun specificEmailAppIntent(name: String): Boolean {
         val emailIntent = Intent(Intent.ACTION_VIEW, Uri.parse("mailto:"))
         val packageManager = applicationContext.packageManager
@@ -131,6 +194,33 @@ class OpenMailAppPlugin : FlutterPlugin, MethodCallHandler {
         emailInboxIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         applicationContext.startActivity(emailInboxIntent)
         return true
+    }
+
+    private fun composeNewEmailInSpecificEmailAppIntent(@NonNull name: String, @NonNull contentJson: String): Boolean {
+        val packageManager = applicationContext.packageManager
+        val emailContent = Gson().fromJson(contentJson, EmailContent::class.java)
+        val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
+            data = Uri.parse("mailto:")
+            putExtra(Intent.EXTRA_EMAIL, emailContent.to)
+            putExtra(Intent.EXTRA_CC, emailContent.cc)
+            putExtra(Intent.EXTRA_BCC, emailContent.bcc)
+            putExtra(Intent.EXTRA_SUBJECT, emailContent.subject)
+            putExtra(Intent.EXTRA_TEXT, emailContent.body)
+        }
+
+        val activitiesHandlingEmails = packageManager.queryIntentActivities(emailIntent, 0)
+        val specificEmailActivity = activitiesHandlingEmails.firstOrNull {
+            it.loadLabel(packageManager) == name
+        } ?: return false
+
+        val specificEmailActivityPackageName = specificEmailActivity.activityInfo.packageName
+        val composeEmailIntent = packageManager.getLaunchIntentForPackage(specificEmailActivityPackageName) ?: return false
+
+        composeEmailIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        applicationContext.startActivity(composeEmailIntent)
+        return true
+
+        return true;
     }
 
     private fun getInstalledMailApps(): List<App> {
@@ -154,3 +244,11 @@ class OpenMailAppPlugin : FlutterPlugin, MethodCallHandler {
 data class App(
         @SerializedName("name") val name: String
 )
+
+data class EmailContent {
+    val to: List<String>
+    val cc: List<String>
+    val bcc: List<String>
+    val subject: String
+    val body: String
+}
