@@ -246,7 +246,8 @@ class OpenMailApp {
   static Future<List<MailApp>> _getIosMailApps() async {
     var installedApps = <MailApp>[];
     for (var app in _supportedMailApps) {
-      if (await canLaunch(app.iosLaunchScheme) && !_filterList.contains(app.name.toLowerCase())) {
+      if (await canLaunch(app.iosLaunchScheme) &&
+          !_filterList.contains(app.name.toLowerCase())) {
         installedApps.add(app);
       }
     }
@@ -378,8 +379,8 @@ class MailApp {
 
   factory MailApp.fromJson(Map<String, dynamic> json) => MailApp(
         name: json["name"],
-        iosLaunchScheme: json["iosLaunchScheme"],
-        composeData: json["composeData"],
+        iosLaunchScheme: json["iosLaunchScheme"] ?? '',
+        composeData: json["composeData"] ?? ComposeData(),
       );
 
   Map<String, dynamic> toJson() => {

@@ -49,15 +49,18 @@ class MyApp extends StatelessWidget {
               onPressed: () async {
                 EmailContent email = EmailContent(
                   to: [
-                    'user@localhost',
+                    'user@domain.com',
                   ],
                   subject: 'Hello!',
                   body: 'How are you doing?',
-                  cc: ['user2@localhost', 'user3@localhost'],
-                  bcc: ['boss@localhost'],
+                  cc: ['user2@domain.com', 'user3@domain.com'],
+                  bcc: ['boss@domain.com'],
                 );
 
-                OpenMailAppResult result = await OpenMailApp.composeNewEmailInMailApp(emailContent: email);
+                OpenMailAppResult result =
+                    await OpenMailApp.composeNewEmailInMailApp(
+                        nativePickerTitle: 'Select email app to compose',
+                        emailContent: email);
                 if (!result.didOpen && !result.canOpen) {
                   showNoMailAppsDialog(context);
                 } else if (!result.didOpen && result.canOpen) {
@@ -84,6 +87,15 @@ class MyApp extends StatelessWidget {
                     builder: (context) {
                       return MailAppPickerDialog(
                         mailApps: apps,
+                        emailContent: EmailContent(
+                          to: [
+                            'user@domain.com',
+                          ],
+                          subject: 'Hello!',
+                          body: 'How are you doing?',
+                          cc: ['user2@domain.com', 'user3@domain.com'],
+                          bcc: ['boss@domain.com'],
+                        ),
                       );
                     },
                   );
