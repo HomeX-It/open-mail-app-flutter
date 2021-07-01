@@ -15,6 +15,7 @@ const String _LAUNCH_SCHEME_AIRMAIL = 'airmail://';
 const String _LAUNCH_SCHEME_OUTLOOK = 'ms-outlook://';
 const String _LAUNCH_SCHEME_YAHOO = 'ymail://';
 const String _LAUNCH_SCHEME_FASTMAIL = 'fastmail://';
+const String _LAUNCH_SCHEME_SUPERHUMAN = 'superhuman://';
 
 /// Provides ability to query device for installed email apps and open those
 /// apps
@@ -81,6 +82,11 @@ class OpenMailApp {
       composeData: ComposeData(
         base: _LAUNCH_SCHEME_FASTMAIL + 'mail/compose',
       ),
+    ),
+    MailApp(
+      name: 'Superhuman',
+      iosLaunchScheme: _LAUNCH_SCHEME_SUPERHUMAN,
+      composeData: ComposeData(),
     ),
   ];
 
@@ -246,8 +252,7 @@ class OpenMailApp {
   static Future<List<MailApp>> _getIosMailApps() async {
     var installedApps = <MailApp>[];
     for (var app in _supportedMailApps) {
-      if (await canLaunch(app.iosLaunchScheme) &&
-          !_filterList.contains(app.name.toLowerCase())) {
+      if (await canLaunch(app.iosLaunchScheme) && !_filterList.contains(app.name.toLowerCase())) {
         installedApps.add(app);
       }
     }
@@ -427,8 +432,7 @@ class EmailContent {
   final List<String> cc;
   final List<String> bcc;
   final String _subject;
-  String get subject =>
-      Platform.isIOS ? Uri.encodeComponent(_subject) : _subject;
+  String get subject => Platform.isIOS ? Uri.encodeComponent(_subject) : _subject;
   final String _body;
   String get body => Platform.isIOS ? Uri.encodeComponent(_body) : _body;
 
