@@ -340,23 +340,25 @@ class ComposeData {
 
   String getComposeLaunchSchemeForIos(EmailContent content) {
     String scheme = base;
+    
     if (content.to.isNotEmpty) {
-      scheme += '$qsPairSeparator${this.to}=${content.to.join(',')}';
+      scheme += '$qsPairSeparator$to=${content.to.join(',')}';
     }
+    
     if (content.cc.isNotEmpty) {
-      scheme += '$qsPairSeparator${this.cc}=${content.cc.join(',')}';
+      scheme += '$qsPairSeparator$cc=${content.cc.join(',')}';
     }
 
     if (content.bcc.isNotEmpty) {
-      scheme += '$qsPairSeparator${this.bcc}=${content.bcc.join(',')}';
+      scheme += '$qsPairSeparator$bcc=${content.bcc.join(',')}';
     }
 
     if (content.subject.isNotEmpty) {
-      scheme += '$qsPairSeparator${this.subject}=${content.subject}';
+      scheme += '$qsPairSeparator$subject=${content.subject}';
     }
 
     if (content.body.isNotEmpty) {
-      scheme += '$qsPairSeparator${this.body}=${content.body}';
+      scheme += '$qsPairSeparator$body=${content.body}';
     }
 
     // Reset to make sure you can fetch this multiple times on the same instance.

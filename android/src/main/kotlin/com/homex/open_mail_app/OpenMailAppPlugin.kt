@@ -165,7 +165,7 @@ class OpenMailAppPlugin : FlutterPlugin, MethodCallHandler {
                                     putExtra(Intent.EXTRA_SUBJECT, emailContent.subject)
                                     putExtra(Intent.EXTRA_TEXT, emailContent.body)
                                 },
-                            packageName, 
+                            packageName,
                             activityHandlingEmail.loadLabel(packageManager),
                             activityHandlingEmail.icon
                         )
