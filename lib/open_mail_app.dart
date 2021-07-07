@@ -298,13 +298,14 @@ class MailAppPickerDialog extends StatelessWidget {
           SimpleDialogOption(
             child: Text(app.name),
             onPressed: () {
-              if (emailContent == null) {
-                OpenMailApp.openSpecificMailApp(app);
-              } else {
+              final content = this.emailContent;
+              if (content != null) {
                 OpenMailApp.composeNewEmailInSpecificMailApp(
                   mailApp: app,
-                  emailContent: emailContent!,
+                  emailContent: content,
                 );
+              } else {
+                OpenMailApp.openSpecificMailApp(app);
               }
 
               Navigator.pop(context);
@@ -340,11 +341,11 @@ class ComposeData {
 
   String getComposeLaunchSchemeForIos(EmailContent content) {
     String scheme = base;
-    
+
     if (content.to.isNotEmpty) {
       scheme += '$qsPairSeparator$to=${content.to.join(',')}';
     }
-    
+
     if (content.cc.isNotEmpty) {
       scheme += '$qsPairSeparator$cc=${content.cc.join(',')}';
     }

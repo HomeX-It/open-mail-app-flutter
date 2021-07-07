@@ -14,7 +14,6 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
-import java.net.URLDecoder
 
 class OpenMailAppPlugin : FlutterPlugin, MethodCallHandler {
     private lateinit var channel: MethodChannel
@@ -54,32 +53,16 @@ class OpenMailAppPlugin : FlutterPlugin, MethodCallHandler {
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
         if (call.method == "openMailApp") {
             val opened = emailAppIntent(call.argument("nativePickerTitle") ?: "")
-            if (opened) {
-                result.success(true)
-            } else {
-                result.success(false)
-            }
+            result.success(opened)
         } else if (call.method == "openSpecificMailApp" && call.hasArgument("name")) {
             val opened = specificEmailAppIntent(call.argument("name")!!)
-            if (opened) {
-                result.success(true)
-            } else {
-                result.success(false)
-            }
+            result.success(opened)
         } else if (call.method == "composeNewEmailInMailApp") {
             val opened = composeNewEmailAppIntent(call.argument("nativePickerTitle") ?: "", call.argument("emailContent") ?: "")
-            if (opened) {
-                result.success(true)
-            } else {
-                result.success(false)
-            }
+            result.success(opened)
         } else if (call.method == "composeNewEmailInSpecificMailApp") {
             val opened = composeNewEmailInSpecificEmailAppIntent(call.argument("name") ?: "", call.argument("emailContent") ?: "")
-            if (opened) {
-                result.success(true);
-            } else {
-                result.success(false);
-            }
+            result.success(opened)
         } else if (call.method == "getMainApps") {
             val apps = getInstalledMailApps()
             val appsJson = Gson().toJson(apps)
@@ -176,7 +159,7 @@ class OpenMailAppPlugin : FlutterPlugin, MethodCallHandler {
             val finalIntent = emailAppChooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraEmailComposingIntents)
             finalIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             applicationContext.startActivity(finalIntent)
-            return true;
+            return true
         } else {
             return false
         }
@@ -223,9 +206,8 @@ class OpenMailAppPlugin : FlutterPlugin, MethodCallHandler {
 
         composeEmailIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         applicationContext.startActivity(composeEmailIntent)
+        
         return true
-
-        return true;
     }
 
     private fun getInstalledMailApps(): List<App> {
