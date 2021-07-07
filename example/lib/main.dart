@@ -45,9 +45,40 @@ class MyApp extends StatelessWidget {
               },
             ),
             ElevatedButton(
+              child: Text('Open mail app, with email already composed'),
+              onPressed: () async {
+                EmailContent email = EmailContent(
+                  to: [
+                    'user@domain.com',
+                  ],
+                  subject: 'Hello!',
+                  body: 'How are you doing?',
+                  cc: ['user2@domain.com', 'user3@domain.com'],
+                  bcc: ['boss@domain.com'],
+                );
+
+                OpenMailAppResult result =
+                    await OpenMailApp.composeNewEmailInMailApp(
+                        nativePickerTitle: 'Select email app to compose',
+                        emailContent: email);
+                if (!result.didOpen && !result.canOpen) {
+                  showNoMailAppsDialog(context);
+                } else if (!result.didOpen && result.canOpen) {
+                  showDialog(
+                    context: context,
+                    builder: (_) => MailAppPickerDialog(
+                      mailApps: result.options,
+                      emailContent: email,
+                    ),
+                  );
+                }
+              },
+            ),
+            ElevatedButton(
               child: Text("Get Mail Apps"),
               onPressed: () async {
                 var apps = await OpenMailApp.getMailApps();
+
                 if (apps.isEmpty) {
                   showNoMailAppsDialog(context);
                 } else {
@@ -56,6 +87,15 @@ class MyApp extends StatelessWidget {
                     builder: (context) {
                       return MailAppPickerDialog(
                         mailApps: apps,
+                        emailContent: EmailContent(
+                          to: [
+                            'user@domain.com',
+                          ],
+                          subject: 'Hello!',
+                          body: 'How are you doing?',
+                          cc: ['user2@domain.com', 'user3@domain.com'],
+                          bcc: ['boss@domain.com'],
+                        ),
                       );
                     },
                   );
