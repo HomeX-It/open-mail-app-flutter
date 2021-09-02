@@ -1,3 +1,7 @@
+## 0.3.0
+
+- Added the ability to mock platform during testing to make it easier to write tests 
+
 ## 0.2.0
 
 - Added possibility to call a specific email app and compose a new email.
