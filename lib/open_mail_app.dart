@@ -17,16 +17,16 @@ const String _LAUNCH_SCHEME_YAHOO = 'ymail://';
 const String _LAUNCH_SCHEME_FASTMAIL = 'fastmail://';
 const String _LAUNCH_SCHEME_SUPERHUMAN = 'superhuman://';
 
-@visibleForTesting
-Platform platform = LocalPlatform();
-
-bool get _isAndroid => platform.isAndroid;
-bool get _isIOS => platform.isIOS;
-
 /// Provides ability to query device for installed email apps and open those
 /// apps
 class OpenMailApp {
   OpenMailApp._();
+
+  @visibleForTesting
+  static Platform platform = LocalPlatform();
+
+  static bool get _isAndroid => platform.isAndroid;
+  static bool get _isIOS => platform.isIOS;
 
   static const MethodChannel _channel = const MethodChannel('open_mail_app');
   static List<String> _filterList = <String>['paypal'];
@@ -405,9 +405,9 @@ class MailApp {
       };
 
   String? composeLaunchScheme(EmailContent content) {
-    if (_isAndroid) {
+    if (OpenMailApp._isAndroid) {
       return content.toJson();
-    } else if (_isIOS) {
+    } else if (OpenMailApp._isIOS) {
       return this.composeData!.getComposeLaunchSchemeForIos(content);
     } else {
       throw Exception('Platform not supported');
@@ -442,9 +442,10 @@ class EmailContent {
   final List<String> cc;
   final List<String> bcc;
   final String _subject;
-  String get subject => _isIOS ? Uri.encodeComponent(_subject) : _subject;
+  String get subject =>
+      OpenMailApp._isIOS ? Uri.encodeComponent(_subject) : _subject;
   final String _body;
-  String get body => _isIOS ? Uri.encodeComponent(_body) : _body;
+  String get body => OpenMailApp._isIOS ? Uri.encodeComponent(_body) : _body;
 
   EmailContent({
     List<String>? to,
