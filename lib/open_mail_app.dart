@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'dart:io';
 
+import 'package:platform/platform.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,6 +16,12 @@ const String _LAUNCH_SCHEME_OUTLOOK = 'ms-outlook://';
 const String _LAUNCH_SCHEME_YAHOO = 'ymail://';
 const String _LAUNCH_SCHEME_FASTMAIL = 'fastmail://';
 const String _LAUNCH_SCHEME_SUPERHUMAN = 'superhuman://';
+
+@visibleForTesting
+Platform platform = LocalPlatform();
+
+bool get _isAndroid => platform.isAndroid;
+bool get _isIOS => platform.isIOS;
 
 /// Provides ability to query device for installed email apps and open those
 /// apps
@@ -105,14 +111,14 @@ class OpenMailApp {
   static Future<OpenMailAppResult> openMailApp({
     String nativePickerTitle = '',
   }) async {
-    if (Platform.isAndroid) {
+    if (_isAndroid) {
       final result = await _channel.invokeMethod<bool>(
             'openMailApp',
             <String, dynamic>{'nativePickerTitle': nativePickerTitle},
           ) ??
           false;
       return OpenMailAppResult(didOpen: result);
-    } else if (Platform.isIOS) {
+    } else if (_isIOS) {
       final apps = await _getIosMailApps();
       if (apps.length == 1) {
         final result = await launch(
@@ -138,7 +144,7 @@ class OpenMailApp {
     String nativePickerTitle = '',
     required EmailContent emailContent,
   }) async {
-    if (Platform.isAndroid) {
+    if (_isAndroid) {
       final result = await _channel.invokeMethod<bool>(
             'composeNewEmailInMailApp',
             <String, String>{
@@ -149,7 +155,7 @@ class OpenMailApp {
           false;
 
       return OpenMailAppResult(didOpen: result);
-    } else if (Platform.isIOS) {
+    } else if (_isIOS) {
       List<MailApp> installedApps = await _getIosMailApps();
       if (installedApps.length == 1) {
         bool result = await launch(
@@ -177,7 +183,7 @@ class OpenMailApp {
     required MailApp mailApp,
     required EmailContent emailContent,
   }) async {
-    if (Platform.isAndroid) {
+    if (_isAndroid) {
       final result = await _channel.invokeMethod<bool>(
             'composeNewEmailInSpecificMailApp',
             <String, dynamic>{
@@ -187,7 +193,7 @@ class OpenMailApp {
           ) ??
           false;
       return result;
-    } else if (Platform.isIOS) {
+    } else if (_isIOS) {
       String? launchScheme = mailApp.composeLaunchScheme(emailContent);
       if (launchScheme != null) {
         return await launch(
@@ -205,14 +211,14 @@ class OpenMailApp {
   /// Attempts to open a specific email app installed on the device.
   /// Get a [MailApp] from calling [getMailApps]
   static Future<bool> openSpecificMailApp(MailApp mailApp) async {
-    if (Platform.isAndroid) {
+    if (_isAndroid) {
       var result = await _channel.invokeMethod<bool>(
             'openSpecificMailApp',
             <String, dynamic>{'name': mailApp.name},
           ) ??
           false;
       return result;
-    } else if (Platform.isIOS) {
+    } else if (_isIOS) {
       return await launch(
         mailApp.iosLaunchScheme,
         forceSafariVC: false,
@@ -226,9 +232,9 @@ class OpenMailApp {
   ///
   /// iOS: [MailApp.iosLaunchScheme] will be populated
   static Future<List<MailApp>> getMailApps() async {
-    if (Platform.isAndroid) {
+    if (_isAndroid) {
       return await _getAndroidMailApps();
-    } else if (Platform.isIOS) {
+    } else if (_isIOS) {
       return await _getIosMailApps();
     } else {
       throw Exception('Platform not supported');
@@ -252,7 +258,8 @@ class OpenMailApp {
   static Future<List<MailApp>> _getIosMailApps() async {
     var installedApps = <MailApp>[];
     for (var app in _supportedMailApps) {
-      if (await canLaunch(app.iosLaunchScheme) && !_filterList.contains(app.name.toLowerCase())) {
+      if (await canLaunch(app.iosLaunchScheme) &&
+          !_filterList.contains(app.name.toLowerCase())) {
         installedApps.add(app);
       }
     }
@@ -398,9 +405,9 @@ class MailApp {
       };
 
   String? composeLaunchScheme(EmailContent content) {
-    if (Platform.isAndroid) {
+    if (_isAndroid) {
       return content.toJson();
-    } else if (Platform.isIOS) {
+    } else if (_isIOS) {
       return this.composeData!.getComposeLaunchSchemeForIos(content);
     } else {
       throw Exception('Platform not supported');
@@ -435,9 +442,9 @@ class EmailContent {
   final List<String> cc;
   final List<String> bcc;
   final String _subject;
-  String get subject => Platform.isIOS ? Uri.encodeComponent(_subject) : _subject;
+  String get subject => _isIOS ? Uri.encodeComponent(_subject) : _subject;
   final String _body;
-  String get body => Platform.isIOS ? Uri.encodeComponent(_body) : _body;
+  String get body => _isIOS ? Uri.encodeComponent(_body) : _body;
 
   EmailContent({
     List<String>? to,
