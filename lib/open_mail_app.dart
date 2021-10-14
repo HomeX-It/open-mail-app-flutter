@@ -158,10 +158,14 @@ class OpenMailApp {
     } else if (_isIOS) {
       List<MailApp> installedApps = await _getIosMailApps();
       if (installedApps.length == 1) {
-        bool result = await launch(
-          installedApps.first.iosLaunchScheme,
-          forceSafariVC: false,
-        );
+        bool result = false;
+        String? launchScheme = installedApps.first.composeLaunchScheme(emailContent);
+        if (launchScheme != null) {
+          result = await launch(
+            launchScheme,
+            forceSafariVC: false,
+          );
+        }
         return OpenMailAppResult(didOpen: result);
       } else {
         // This is pretty shit since you can't do anything with this...
