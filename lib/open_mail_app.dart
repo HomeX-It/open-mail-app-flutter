@@ -16,6 +16,7 @@ const String _LAUNCH_SCHEME_OUTLOOK = 'ms-outlook://';
 const String _LAUNCH_SCHEME_YAHOO = 'ymail://';
 const String _LAUNCH_SCHEME_FASTMAIL = 'fastmail://';
 const String _LAUNCH_SCHEME_SUPERHUMAN = 'superhuman://';
+const String _LAUNCH_SCHEME_PROTONMAIL = 'protonmail://';
 
 /// Provides ability to query device for installed email apps and open those
 /// apps
@@ -93,6 +94,13 @@ class OpenMailApp {
       name: 'Superhuman',
       iosLaunchScheme: _LAUNCH_SCHEME_SUPERHUMAN,
       composeData: ComposeData(),
+    ),
+    MailApp(
+      name: 'ProtonMail',
+      iosLaunchScheme: _LAUNCH_SCHEME_PROTONMAIL,
+      composeData: ComposeData(
+        base: _LAUNCH_SCHEME_PROTONMAIL + 'mail/compose',
+      ),
     ),
   ];
 

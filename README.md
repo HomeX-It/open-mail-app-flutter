@@ -22,6 +22,7 @@ iOS requires you to list the URL schemes you would like to query in the `Info.pl
     <string>ymail</string>
     <string>fastmail</string>
     <string>superhuman</string>
+    <string>protonmail</string>
 </array>
 ```
 
