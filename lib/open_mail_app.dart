@@ -177,7 +177,7 @@ class OpenMailApp {
         }
         return OpenMailAppResult(didOpen: result);
       } else {
-        // This is pretty shit since you can't do anything with this...
+        // This isn't ideal since you can't do anything with this...
         // Need to adapt the flow with that popup to also allow to pass emailcontent there.
         return OpenMailAppResult(didOpen: false, options: installedApps);
       }
