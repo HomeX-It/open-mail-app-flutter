@@ -1,3 +1,8 @@
+## 0.4.0
+
+- Added ProtonMail
+- Bumped min iOS version to 9
+
 ## 0.3.0
 
 - Added the ability to mock platform during testing to make it easier to write tests 
