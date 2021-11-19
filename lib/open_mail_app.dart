@@ -168,7 +168,8 @@ class OpenMailApp {
       List<MailApp> installedApps = await _getIosMailApps();
       if (installedApps.length == 1) {
         bool result = false;
-        String? launchScheme = installedApps.first.composeLaunchScheme(emailContent);
+        String? launchScheme =
+            installedApps.first.composeLaunchScheme(emailContent);
         if (launchScheme != null) {
           result = await launch(
             launchScheme,
