@@ -1,3 +1,8 @@
+## 0.4.1
+Thanks to LosDanieloss for the following fix
+
+- Fix composing a new email on iOS when there is only one email app installed
+
 ## 0.4.0
 
 - Added ProtonMail
