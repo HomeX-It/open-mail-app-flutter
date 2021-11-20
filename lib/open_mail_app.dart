@@ -294,6 +294,16 @@ class OpenMailApp {
     _filterList = filterList.map((e) => e.toLowerCase()).toList();
   }
 
+  /// Shows platform-dependent picker allowing the user to pick and open an email app
+  /// On Android it will show a SimpleDialog widget.
+  /// On iOS it will show CupertinoActionSheet widget.
+  /// Use with [OpenMailApp.getMailApps] or [OpenMailApp.openMailApp] to get a
+  /// list of mail apps installed on the device.
+  /// [context] BuildContext
+  /// [mailApps] list of apps received from [OpenMailApp.getMailApps], [OpenMailApp.openMailApp] or [OpenMailApp.composeNewEmailInMailApp]
+  /// [emailContent] provides content for the email you're composing
+  /// [pickerTitle] title of dialog/action sheet
+  /// [cancel] Text for Cancel button. For iOS only, since Android dialog has no Cancel button
   static Future<void> showMailPicker(
     BuildContext context, {
     required List<MailApp> mailApps,
