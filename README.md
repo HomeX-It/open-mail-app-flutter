@@ -39,8 +39,8 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return RaisedButton(
-      child: Text("Open Mail App"),
+    return ElevatedButton(
+      child: Text('Open Mail App'),
       onPressed: () async {
         // Android: Will open mail app or show native picker.
         // iOS: Will open mail app if single mail app found.
@@ -50,17 +50,11 @@ class MyApp extends StatelessWidget {
         if (!result.didOpen && !result.canOpen) {
           showNoMailAppsDialog(context);
 
-          // iOS: if multiple mail apps found, show dialog to select.
-          // There is no native intent/default app system in iOS so
-          // you have to do it yourself.
+          // iOS: if multiple mail apps found, show action sheet to select.
         } else if (!result.didOpen && result.canOpen) {
-          showDialog(
-            context: context,
-            builder: (_) {
-              return MailAppPickerDialog(
-                mailApps: result.options,
-              );
-            },
+          OpenMailApp.showMailPicker(
+            context,
+            mailApps: result.options,
           );
         }
       },
@@ -72,11 +66,11 @@ class MyApp extends StatelessWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("Open Mail App"),
-          content: Text("No mail apps installed"),
+          title: Text('Open Mail App'),
+          content: Text('No mail apps installed'),
           actions: <Widget>[
-            FlatButton(
-              child: Text("OK"),
+            TextButton(
+              child: Text('OK'),
               onPressed: () {
                 Navigator.pop(context);
               },

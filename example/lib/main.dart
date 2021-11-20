@@ -33,13 +33,9 @@ class MyApp extends StatelessWidget {
                   // There is no native intent/default app system in iOS so
                   // you have to do it yourself.
                 } else if (!result.didOpen && result.canOpen) {
-                  showDialog(
-                    context: context,
-                    builder: (_) {
-                      return MailAppPickerDialog(
-                        mailApps: result.options,
-                      );
-                    },
+                  OpenMailApp.showMailPicker(
+                    context,
+                    mailApps: result.options,
                   );
                 }
               },
@@ -64,12 +60,10 @@ class MyApp extends StatelessWidget {
                 if (!result.didOpen && !result.canOpen) {
                   showNoMailAppsDialog(context);
                 } else if (!result.didOpen && result.canOpen) {
-                  showDialog(
-                    context: context,
-                    builder: (_) => MailAppPickerDialog(
-                      mailApps: result.options,
-                      emailContent: email,
-                    ),
+                  OpenMailApp.showMailPicker(
+                    context,
+                    mailApps: result.options,
+                    emailContent: email,
                   );
                 }
               },
@@ -82,22 +76,18 @@ class MyApp extends StatelessWidget {
                 if (apps.isEmpty) {
                   showNoMailAppsDialog(context);
                 } else {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return MailAppPickerDialog(
-                        mailApps: apps,
-                        emailContent: EmailContent(
-                          to: [
-                            'user@domain.com',
-                          ],
-                          subject: 'Hello!',
-                          body: 'How are you doing?',
-                          cc: ['user2@domain.com', 'user3@domain.com'],
-                          bcc: ['boss@domain.com'],
-                        ),
-                      );
-                    },
+                  OpenMailApp.showMailPicker(
+                    context,
+                    mailApps: apps,
+                    emailContent: EmailContent(
+                      to: [
+                        'user@domain.com',
+                      ],
+                      subject: 'Hello!',
+                      body: 'How are you doing?',
+                      cc: ['user2@domain.com', 'user3@domain.com'],
+                      bcc: ['boss@domain.com'],
+                    ),
                   );
                 }
               },

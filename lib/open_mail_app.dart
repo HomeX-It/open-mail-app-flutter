@@ -1,8 +1,11 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:open_mail_app/mail_picker_dialog_android.dart';
+import 'package:open_mail_app/mail_picker_dialog_ios.dart';
 import 'package:platform/platform.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -290,50 +293,37 @@ class OpenMailApp {
   static void setFilterList(List<String> filterList) {
     _filterList = filterList.map((e) => e.toLowerCase()).toList();
   }
-}
 
-/// A simple dialog for allowing the user to pick and open an email app
-/// Use with [OpenMailApp.getMailApps] or [OpenMailApp.openMailApp] to get a
-/// list of mail apps installed on the device.
-class MailAppPickerDialog extends StatelessWidget {
-  /// The title of the dialog
-  final String title;
-
-  /// The mail apps for the dialog to provide as options
-  final List<MailApp> mailApps;
-  final EmailContent? emailContent;
-
-  const MailAppPickerDialog({
-    Key? key,
-    this.title = 'Choose Mail App',
-    required this.mailApps,
-    this.emailContent,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return SimpleDialog(
-      title: Text(title),
-      children: <Widget>[
-        for (var app in mailApps)
-          SimpleDialogOption(
-            child: Text(app.name),
-            onPressed: () {
-              final content = this.emailContent;
-              if (content != null) {
-                OpenMailApp.composeNewEmailInSpecificMailApp(
-                  mailApp: app,
-                  emailContent: content,
-                );
-              } else {
-                OpenMailApp.openSpecificMailApp(app);
-              }
-
-              Navigator.pop(context);
-            },
-          ),
-      ],
-    );
+  static Future<void> showMailPicker(
+    BuildContext context, {
+    required List<MailApp> mailApps,
+    EmailContent? emailContent,
+    String pickerTitle = 'Choose Mail App',
+    String cancelButtonTitle = 'Cancel',
+  }) {
+    if (_isAndroid) {
+      return showDialog(
+          context: context,
+          builder: (_) {
+            return MailAppPickerDialogAndroid(
+              title: pickerTitle,
+              cancelButtonTitle: cancelButtonTitle,
+              mailApps: mailApps,
+              emailContent: emailContent,
+            );
+          });
+    } else {
+      return showCupertinoModalPopup(
+          context: context,
+          builder: (_) {
+            return MailAppPickerDialogIOS(
+              title: pickerTitle,
+              cancelButtonTitle: cancelButtonTitle,
+              mailApps: mailApps,
+              emailContent: emailContent,
+            );
+          });
+    }
   }
 }
 
