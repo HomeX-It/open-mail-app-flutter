@@ -8,6 +8,7 @@ import 'open_mail_app.dart';
 class MailAppPickerDialogAndroid extends StatelessWidget {
   /// The title of the dialog
   final String title;
+
   /// The title for cancel button of the dialog
   final String cancelButtonTitle;
 
