@@ -1,6 +1,6 @@
 ## 0.5.0
 
-- Replace `MailAppPickerDialog` with `OpenMailApp.showMailPicker()` function, which shows SimpleDialog on Android and CupertinoActionSheet on iOS
+- BREAKING CHANGE: Replace `MailAppPickerDialog` with `OpenMailApp.showMailPicker()` function, which shows SimpleDialog on Android and CupertinoActionSheet on iOS
 - Update for Android dependencies
 
 ## 0.4.1
