@@ -1,3 +1,7 @@
+## 0.4.3
+
+- Android: migrate from jcenter to mavenCentral
+
 ## 0.4.2
 Thanks to deathcoder for the following fix
 
