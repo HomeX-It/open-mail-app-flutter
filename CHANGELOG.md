@@ -1,9 +1,15 @@
+## 0.4.3
+
+- Android: migrate from jcenter to mavenCentral
+- Updated Gradle to 7.0.2
+- Updated Gradle Build Tools to 7.0.4
+
 ## 0.4.2
 Thanks to deathcoder for the following fix
 
 - Updated Kotlin to 1.6.10
-- Updated Gradle to 7.0.2
-- Updated Gradle Build Tools to 7.0.4
+- Updated Gradle to 7.0.2 (example)
+- Updated Gradle Build Tools to 7.0.4 (example)
 
 ## 0.4.1
 Thanks to LosDanieloss for the following fix
