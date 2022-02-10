@@ -1,3 +1,7 @@
+## 0.4.4
+- Support Flutter 2.10.0
+  - Update Android compileSdkVersion to 31 (Android 12)
+
 ## 0.4.3
 
 - Android: migrate from jcenter to mavenCentral
