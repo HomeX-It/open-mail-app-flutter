@@ -177,8 +177,8 @@ class OpenMailApp {
         }
         return OpenMailAppResult(didOpen: result);
       } else {
-        // This isn't ideal since you can't do anything with this...
-        // Need to adapt the flow with that popup to also allow to pass emailcontent there.
+        // There are multiple mail apps installed
+        // You can show a MailAppPickerDialog(mailApps: result.options, emailContent: emailContent) to allow the user to pick an option
         return OpenMailAppResult(didOpen: false, options: installedApps);
       }
     } else {
