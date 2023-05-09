@@ -2,7 +2,7 @@
 [![pub package](https://img.shields.io/pub/v/open_mail_app.svg?label=open_mail_app&color=blue)](https://pub.dev/packages/open_mail_app)
 
 A boring but accurate name.
-h
+
 This library provides the ability to query the device for installed email apps and open those apps.
 
 If you just want to compose an email or open any app with a `mailto:` link, you are looking for [url_launcher](https://pub.dev/packages/url_launcher).
