@@ -16,8 +16,8 @@ const String _LAUNCH_SCHEME_YAHOO = 'ymail://';
 const String _LAUNCH_SCHEME_FASTMAIL = 'fastmail://';
 const String _LAUNCH_SCHEME_SUPERHUMAN = 'superhuman://';
 const String _LAUNCH_SCHEME_PROTONMAIL = 'protonmail://';
-const String _LAUNCH_SCHEME_GMX = 'gmx://';
-const String _LAUNCH_SCHEME_WEB = 'web://';
+const String _LAUNCH_SCHEME_GMX = 'x-gmxmail-netid-v1://';
+const String _LAUNCH_SCHEME_WEB = 'x-webdemail-netid-v1://';
 
 /// Provides ability to query device for installed email apps and open those
 /// apps
