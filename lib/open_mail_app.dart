@@ -16,6 +16,8 @@ const String _LAUNCH_SCHEME_YAHOO = 'ymail://';
 const String _LAUNCH_SCHEME_FASTMAIL = 'fastmail://';
 const String _LAUNCH_SCHEME_SUPERHUMAN = 'superhuman://';
 const String _LAUNCH_SCHEME_PROTONMAIL = 'protonmail://';
+const String _LAUNCH_SCHEME_GMX = 'gmx://';
+const String _LAUNCH_SCHEME_WEB = 'web://';
 
 /// Provides ability to query device for installed email apps and open those
 /// apps
@@ -102,6 +104,20 @@ class OpenMailApp {
         base: _LAUNCH_SCHEME_PROTONMAIL + 'mailto:',
       ),
     ),
+    MailApp(
+      name: 'GMX',
+      iosLaunchScheme: _LAUNCH_SCHEME_GMX,
+      composeData: ComposeData(
+        base: _LAUNCH_SCHEME_GMX + 'mailto:',
+      ),
+    ),
+    MailApp(
+      name: 'WEB',
+      iosLaunchScheme: _LAUNCH_SCHEME_WEB,
+      composeData: ComposeData(
+        base: _LAUNCH_SCHEME_WEB + 'mailto:',
+      ),
+    ),
   ];
 
   /// Attempts to open an email app installed on the device.
@@ -167,8 +183,7 @@ class OpenMailApp {
       List<MailApp> installedApps = await _getIosMailApps();
       if (installedApps.length == 1) {
         bool result = false;
-        String? launchScheme =
-            installedApps.first.composeLaunchScheme(emailContent);
+        String? launchScheme = installedApps.first.composeLaunchScheme(emailContent);
         if (launchScheme != null) {
           result = await launch(
             launchScheme,
@@ -271,8 +286,7 @@ class OpenMailApp {
   static Future<List<MailApp>> _getIosMailApps() async {
     var installedApps = <MailApp>[];
     for (var app in _supportedMailApps) {
-      if (await canLaunch(app.iosLaunchScheme) &&
-          !_filterList.contains(app.name.toLowerCase())) {
+      if (await canLaunch(app.iosLaunchScheme) && !_filterList.contains(app.name.toLowerCase())) {
         installedApps.add(app);
       }
     }
@@ -457,8 +471,7 @@ class EmailContent {
   final List<String> bcc;
   final String _subject;
 
-  String get subject =>
-      OpenMailApp._isIOS ? Uri.encodeComponent(_subject) : _subject;
+  String get subject => OpenMailApp._isIOS ? Uri.encodeComponent(_subject) : _subject;
   final String _body;
 
   String get body => OpenMailApp._isIOS ? Uri.encodeComponent(_body) : _body;
