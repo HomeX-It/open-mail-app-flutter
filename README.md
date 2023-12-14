@@ -1,4 +1,5 @@
 # Open Mail App Flutter ![Flutter 2.10.0](https://img.shields.io/badge/Flutter-2.10.0-blue)
+
 [![pub package](https://img.shields.io/pub/v/open_mail_app.svg?label=open_mail_app&color=blue)](https://pub.dev/packages/open_mail_app)
 
 A boring but accurate name.
@@ -6,9 +7,13 @@ A boring but accurate name.
 This library provides the ability to query the device for installed email apps and open those apps.
 
 If you just want to compose an email or open any app with a `mailto:` link, you are looking for [url_launcher](https://pub.dev/packages/url_launcher).
+
 ## Why
+
 While [url_launcher](https://pub.dev/packages/url_launcher) can help you compose an email or open the default email app, it doesn't give you control over which is opened and it doesn't tell you what is available on the device. This is especially a problem on iOS where only the default [Mail](https://apps.apple.com/us/app/mail/id1108187098) app will be opened, even if the user prefers a different app.
+
 ## Setup
+
 iOS requires you to list the URL schemes you would like to query in the `Info.plist` file.
 
 ```
@@ -23,12 +28,17 @@ iOS requires you to list the URL schemes you would like to query in the `Info.pl
     <string>fastmail</string>
     <string>superhuman</string>
     <string>protonmail</string>
+    <string>x-gmxmail-netid-v1</string>
+    <string>x-webdemail-netid-v1</string>
 </array>
 ```
 
-Please file issues to add popular email apps you would like to see on iOS. They need to be added to both your app's `Info.plist` and in the source of this library. 
+Please file issues to add popular email apps you would like to see on iOS. They need to be added to both your app's `Info.plist` and in the source of this library.
+
 ## Usage
+
 ### Open Mail App With Picker If Multiple
+
 ```dart
 import 'package:open_mail_app/open_mail_app.dart';
 
