@@ -108,14 +108,14 @@ class OpenMailApp {
       name: 'GMX',
       iosLaunchScheme: _LAUNCH_SCHEME_GMX,
       composeData: ComposeData(
-        base: _LAUNCH_SCHEME_GMX + 'mailto:',
+        base: _LAUNCH_SCHEME_GMX + 'compose',
       ),
     ),
     MailApp(
       name: 'WEB',
       iosLaunchScheme: _LAUNCH_SCHEME_WEB,
       composeData: ComposeData(
-        base: _LAUNCH_SCHEME_WEB + 'mailto:',
+        base: _LAUNCH_SCHEME_WEB + 'compose',
       ),
     ),
   ];
