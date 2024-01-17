@@ -1,5 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.homex.open_mail_app_example">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
         android:name="${applicationName}"
         android:label="open_mail_app_example"
